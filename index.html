@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ContentAI Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1c1c2e;
+    --border: #2a2a40;
+    --accent: #7c5cfc;
+    --accent2: #fc5c7d;
+    --accent3: #56ccf2;
+    --text: #e8e8f0;
+    --text2: #8888aa;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+
+  /* SIDEBAR */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 300; transition: transform .3s; }
+  .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo span { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sidebar-logo small { display: block; color: var(--text2); font-size: 11px; margin-top: 2px; }
+  .nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: var(--text2); font-size: 13.5px; font-weight: 500; transition: all .2s; margin-bottom: 2px; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: linear-gradient(135deg, rgba(124,92,252,.2), rgba(252,92,125,.1)); color: var(--accent); border: 1px solid rgba(124,92,252,.3); }
+  .nav-item .icon { font-size: 18px; width: 22px; text-align: center; }
+  .nav-section { color: var(--text2); font-size: 10px; font-weight: 700; letter-spacing: 1.2px; padding: 14px 12px 6px; text-transform: uppercase; }
+  .main { margin-left: 240px; flex: 1; padding: 28px; min-height: 100vh; }
+
+  /* TOPBAR */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .page-title { font-size: 24px; font-weight: 800; }
+  .topbar-right { display: flex; gap: 10px; }
+  .btn { padding: 9px 18px; border-radius: 10px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 13.5px; transition: all .2s; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text2); text-transform: uppercase; letter-spacing: .8px; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 6px; background: var(--surface2); padding: 5px; border-radius: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+  .tab { padding: 8px 16px; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2); transition: all .2s; }
+  .tab.active { background: var(--surface); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* INPUTS */
+  input, textarea, select {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+    padding: 11px 14px; width: 100%; outline: none; transition: border .2s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 90px; }
+  label { font-size: 12.5px; color: var(--text2); font-weight: 500; margin-bottom: 6px; display: block; }
+  .field { margin-bottom: 14px; }
+
+  /* CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip { padding: 6px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); color: var(--text2); transition: all .2s; }
+  .chip:hover, .chip.selected { border-color: var(--accent); color: var(--accent); background: rgba(124,92,252,.12); }
+
+  /* OUTPUT BOXES */
+  .output-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 14px; min-height: 80px; position: relative; font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 11px; cursor: pointer; color: var(--text2); transition: all .2s; }
+  .copy-btn:hover { color: var(--green); border-color: var(--green); }
+
+  /* LOADING */
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid rgba(124,92,252,.3); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--text2); font-size: 13px; }
+
+  /* TOPIC CARDS */
+  .topic-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all .2s; }
+  .topic-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .topic-card h4 { font-size: 14px; margin-bottom: 5px; }
+  .topic-card p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .topic-tag { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+
+  /* CHAT */
+  .chat-box { display: flex; flex-direction: column; height: 460px; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .msg { max-width: 82%; padding: 12px 15px; border-radius: 14px; font-size: 13.5px; line-height: 1.6; }
+  .msg.user { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg.ai { background: var(--surface2); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .chat-input-row { display: flex; gap: 10px; padding: 14px 16px; border-top: 1px solid var(--border); }
+  .chat-input-row input { flex: 1; }
+
+  /* MEDIA SEARCH */
+  .media-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+  .media-thumb { border-radius: 10px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: var(--surface2); cursor: pointer; }
+  .media-thumb img, .media-thumb video { width: 100%; height: 100%; object-fit: cover; }
+  .media-thumb .overlay { position: absolute; inset: 0; background: rgba(0,0,0,.5); opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity .2s; font-size: 22px; }
+  .media-thumb:hover .overlay { opacity: 1; }
+  .media-source { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-bottom: 6px; }
+  .source-pexels { background: #05a081; color: #fff; }
+  .source-pixabay { background: #2ec66e; color: #fff; }
+
+  /* SCHEDULE */
+  .schedule-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 8px; margin: 14px 0; }
+  .day-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 6px; text-align: center; cursor: pointer; transition: all .2s; }
+  .day-card:hover { border-color: var(--accent); }
+  .day-card.best { border-color: var(--green); background: rgba(74,222,128,.08); }
+  .day-card .day-name { font-size: 11px; font-weight: 700; color: var(--text2); }
+  .day-card .day-score { font-size: 20px; margin: 4px 0; }
+  .platform-pill { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; cursor: pointer; transition: all .2s; }
+  .platform-pill:hover { border-color: var(--accent); }
+  .platform-pill .pname { font-size: 13.5px; font-weight: 600; }
+  .platform-pill .pbest { font-size: 12px; color: var(--text2); margin-left: auto; }
+  .platform-icon { font-size: 20px; }
+  .editing-app { display: flex; flex-direction: column; align-items: center; padding: 16px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all .2s; text-decoration: none; }
+  .editing-app:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .editing-app .app-icon { font-size: 36px; margin-bottom: 8px; }
+  .editing-app .app-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .editing-app .app-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+  /* HASH OUTPUT */
+  .hash-tag { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 500; background: rgba(124,92,252,.15); color: var(--accent); border: 1px solid rgba(124,92,252,.3); margin: 3px; cursor: pointer; transition: all .2s; }
+  .hash-tag:hover { background: rgba(124,92,252,.3); }
+
+  /* SCRIPT TYPE CARDS */
+  .script-type { display: flex; flex-direction: column; align-items: center; padding: 18px 12px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all .2s; }
+  .script-type:hover, .script-type.selected { border-color: var(--accent); background: rgba(124,92,252,.1); }
+  .script-type .st-icon { font-size: 28px; margin-bottom: 8px; }
+  .script-type .st-name { font-size: 12.5px; font-weight: 600; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .badge-accent { background: rgba(124,92,252,.2); color: var(--accent); }
+  .badge-green { background: rgba(74,222,128,.15); color: var(--green); }
+  .badge-red { background: rgba(252,92,125,.15); color: var(--accent2); }
+  .badge-blue { background: rgba(86,204,242,.15); color: var(--accent3); }
+
+  /* MOBILE SIDEBAR TOGGLE */
+  .sidebar-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 18px; }
+
+  @media (max-width: 768px) {
+    #global-req-bar { left: 0 !important; }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 16px; padding-top: 60px; }
+    .sidebar-toggle { display: block; }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .schedule-grid { grid-template-columns: repeat(4,1fr); }
+    .media-grid { grid-template-columns: repeat(2,1fr); }
+  }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+  /* ALERT */
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; }
+  .alert-info { background: rgba(86,204,242,.1); border: 1px solid rgba(86,204,242,.3); color: var(--accent3); }
+
+  /* PROGRESS BAR */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width .5s; }
+</style>
+</head>
+<body>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span>ContentAI Pro</span>
+      <small>Your AI Content Studio</small>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="showPage('topics')"><span class="icon">💡</span> Topic Suggest</div>
+      <div class="nav-item" onclick="showPage('pack')"><span class="icon">🎁</span> Content Pack</div>
+      <div class="nav-item" onclick="showPage('generate')"><span class="icon">✨</span> Generate Content</div>
+      <div class="nav-item" onclick="showPage('script')"><span class="icon">📝</span> Script Writer</div>
+      <div class="nav-item" onclick="showPage('chat')"><span class="icon">🤖</span> Chat with AI</div>
+      <div class="nav-section">Media & Tools</div>
+      <div class="nav-item" onclick="showPage('media')"><span class="icon">🎬</span> Media Search</div>
+      <div class="nav-item" onclick="showPage('videotools')"><span class="icon">🎥</span> Video & Image AI</div>
+      <div class="nav-item" onclick="showPage('editing')"><span class="icon">🎨</span> Editing Apps</div>
+      <div class="nav-section">Planning</div>
+      <div class="nav-item" onclick="showPage('planner')"><span class="icon">🗓️</span> 7-Day Planner</div>
+      <div class="nav-item" onclick="showPage('schedule')"><span class="icon">📅</span> Post Schedule</div>
+      <div class="nav-item" onclick="showPage('settings')"><span class="icon">⚙️</span> Settings</div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ========== TOPIC SUGGEST ========== -->
+    <!-- ========== GLOBAL REQUEST COUNTER ========== -->
+    <div id="global-req-bar" style="position:fixed;top:0;left:240px;right:0;z-index:200;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;justify-content:flex-end;gap:10px">
+      <span style="font-size:12px;color:var(--text2)">Daily Requests:</span>
+      <span id="user-req-display" style="font-size:13px;font-weight:600">30/30 requests left today</span>
+    </div>
+
+    <div id="page-topics" class="page active" style="margin-top:40px">
+      <div class="topbar">
+        <div>
+          <div class="page-title">💡 Topic Suggestions</div>
+          <div style="color:var(--text2);font-size:13px;margin-top:4px;">AI-powered topic ideas for your niche</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Choose Category</div>
+          <div class="field">
+            <label>Content Category</label>
+            <select id="topic-category">
+              <option value="technology">💻 Technology & AI</option>
+              <option value="fitness">💪 Fitness & Health</option>
+              <option value="cooking">🍳 Food & Cooking</option>
+              <option value="finance">💰 Finance & Money</option>
+              <option value="fashion">👗 Fashion & Style</option>
+              <option value="travel">✈️ Travel & Adventure</option>
+              <option value="gaming">🎮 Gaming</option>
+              <option value="education">📚 Education</option>
+              <option value="motivation">🔥 Motivation & Mindset</option>
+              <option value="business">📊 Business & Startup</option>
+              <option value="beauty">💄 Beauty & Skincare</option>
+              <option value="entertainment">🎭 Entertainment</option>
+              <option value="sports">⚽ Sports</option>
+              <option value="news">📰 News & Current Events</option>
+              <option value="diy">🔨 DIY & Crafts</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Content Platform</label>
+            <div class="chips" id="platform-chips">
+              <div class="chip selected" onclick="toggleChip(this)">YouTube</div>
+              <div class="chip" onclick="toggleChip(this)">Instagram</div>
+              <div class="chip" onclick="toggleChip(this)">TikTok</div>
+              <div class="chip" onclick="toggleChip(this)">Facebook</div>
+              <div class="chip" onclick="toggleChip(this)">Twitter/X</div>
+              <div class="chip" onclick="toggleChip(this)">LinkedIn</div>
+              <div class="chip" onclick="toggleChip(this)">Snapchat</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Audience Language</label>
+            <select id="topic-lang">
+              <option value="English">English</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Hinglish">Hinglish</option>
+              <option value="Urdu">Urdu</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="fetchTopics(false)">✨ Get 5 Topics</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Suggested Topics</div>
+          <div id="topics-output">
+            <div style="color:var(--text2);font-size:13px;text-align:center;padding:30px 0;">Select a category and click "Get 5 Topics"</div>
+          </div>
+          <div id="topics-nav" style="display:none;margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-ghost" style="flex:1" onclick="fetchTopics(false)">🔄 Refresh</button>
+            <button class="btn btn-primary" style="flex:1" onclick="fetchTopics(true)">➡️ Next 5</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== CONTENT PACK ========== -->
+    <div id="page-pack" class="page" style="margin-top:40px">
+      <div class="topbar">
+        <div>
+          <div class="page-title">🎁 Content Pack</div>
+          <div style="color:var(--text2);font-size:13px;margin-top:4px;">Ek click mein sab kuch generate karo</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="field">
+          <label>Topic / Keyword *</label>
+          <input id="pack-topic" type="text" placeholder="e.g. How to earn money online" />
+        </div>
+        <div class="grid2" style="gap:12px;margin-bottom:14px">
+          <div class="field">
+            <label>Platform</label>
+            <select id="pack-platform">
+              <option>YouTube</option>
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>Facebook</option>
+              <option>Twitter/X</option>
+              <option>LinkedIn</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Language</label>
+            <select id="pack-lang">
+              <option>English</option>
+              <option>Hindi</option>
+              <option>Hinglish</option>
+              <option>Urdu</option>
+              <option>Bengali</option>
+              <option>Tamil</option>
+              <option>Telugu</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="margin-bottom:8px">Select what to generate:</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="pack-titles" checked> 10 Titles</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="pack-topics" checked> 10 Topics</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="pack-captions" checked> 3 Captions</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="pack-hashtags" checked> 20 Hashtags</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="pack-desc"> Description</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="pack-hooks"> 5 Hooks</label>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;padding:14px;font-size:15px" onclick="generatePack()">🚀 Generate Content Pack</button>
+      </div>
+
+      <div id="pack-progress" style="display:none;margin-bottom:18px">
+        <div style="background:var(--surface2);border-radius:10px;padding:14px">
+          <div id="pack-progress-text" style="font-size:13px;color:var(--text2);margin-bottom:8px">Generating...</div>
+          <div style="background:var(--border);border-radius:5px;height:6px"><div id="pack-progress-bar" style="background:linear-gradient(135deg,var(--accent),var(--accent2));height:6px;border-radius:5px;width:0%;transition:width 0.4s"></div></div>
+        </div>
+      </div>
+
+      <div id="pack-results" style="display:none">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+          <button class="btn btn-ghost" onclick="copyPackAll()">📋 Copy All</button>
+        </div>
+        <div id="pack-titles-out" style="display:none;margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">📌 10 Titles</div>
+            <div id="pack-titles-content" class="output-box" style="min-height:60px"></div>
+            <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="copyEl('pack-titles-content')">📋 Copy Titles</button>
+          </div>
+        </div>
+        <div id="pack-topics-out" style="display:none;margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">💡 10 Topics</div>
+            <div id="pack-topics-content" class="output-box" style="min-height:60px"></div>
+            <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="copyEl('pack-topics-content')">📋 Copy Topics</button>
+          </div>
+        </div>
+        <div id="pack-captions-out" style="display:none;margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">✍️ 3 Captions</div>
+            <div id="pack-captions-content" class="output-box" style="min-height:60px"></div>
+            <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="copyEl('pack-captions-content')">📋 Copy Captions</button>
+          </div>
+        </div>
+        <div id="pack-hashtags-out" style="display:none;margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">🏷️ 20 Hashtags</div>
+            <div id="pack-hashtags-content" class="output-box" style="min-height:60px"></div>
+            <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="copyEl('pack-hashtags-content')">📋 Copy Hashtags</button>
+          </div>
+        </div>
+        <div id="pack-desc-out" style="display:none;margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">📄 Description</div>
+            <div id="pack-desc-content" class="output-box" style="min-height:60px"></div>
+            <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="copyEl('pack-desc-content')">📋 Copy Description</button>
+          </div>
+        </div>
+        <div id="pack-hooks-out" style="display:none;margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">🪝 5 Hooks</div>
+            <div id="pack-hooks-content" class="output-box" style="min-height:60px"></div>
+            <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="copyEl('pack-hooks-content')">📋 Copy Hooks</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== GENERATE CONTENT ========== -->
+    <div id="page-generate" class="page" style="margin-top:40px">
+      <div class="topbar">
+        <div class="page-title">✨ Generate Content</div>
+      </div>
+      <div class="tabs" id="gen-tabs">
+        <div class="tab active" onclick="switchTab('gen','title')">Title</div>
+        <div class="tab" onclick="switchTab('gen','desc')">Description</div>
+        <div class="tab" onclick="switchTab('gen','tags')">Tags & Hashtags</div>
+        <div class="tab" onclick="switchTab('gen','caption')">Caption</div>
+        <div class="tab" onclick="switchTab('gen','hook')">Hook Lines</div>
+        <div class="tab" onclick="switchTab('gen','cta')">CTA</div>
+      </div>
+
+      <!-- TITLE -->
+      <div id="gentab-title" class="gentab">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Title Generator</div>
+            <div class="field"><label>Topic / Keywords</label><input id="title-topic" placeholder="e.g. AI tools for content creators" /></div>
+            <div class="field">
+              <label>Style</label>
+              <div class="chips">
+                <div class="chip selected" onclick="toggleChip(this)">Clickbait</div>
+                <div class="chip" onclick="toggleChip(this)">Professional</div>
+                <div class="chip" onclick="toggleChip(this)">Question</div>
+                <div class="chip" onclick="toggleChip(this)">How-To</div>
+                <div class="chip" onclick="toggleChip(this)">Listicle</div>
+                <div class="chip" onclick="toggleChip(this)">Emotional</div>
+              </div>
+            </div>
+            <div class="field"><label>Platform</label>
+              <select id="title-platform"><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>LinkedIn</option><option>Twitter</option></select>
+            </div>
+            <div class="field"><label>Language</label>
+              <select id="title-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('title')">🚀 Generate Titles</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Generated Titles</div>
+            <div id="output-title" class="output-box" style="min-height:200px">Titles will appear here...</div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('title')">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div id="gentab-desc" class="gentab" style="display:none">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Description Generator</div>
+            <div class="field"><label>Video/Post Topic</label><input id="desc-topic" placeholder="What is your content about?" /></div>
+            <div class="field"><label>Platform</label><select id="desc-platform"><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>LinkedIn</option></select></div>
+            <div class="field"><label>Length</label>
+              <div class="chips">
+                <div class="chip" onclick="toggleChip(this)">Short (100w)</div>
+                <div class="chip selected" onclick="toggleChip(this)">Medium (200w)</div>
+                <div class="chip" onclick="toggleChip(this)">Long (400w)</div>
+              </div>
+            </div>
+            <div class="field"><label>Language</label><select id="desc-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select></div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('desc')">🚀 Generate Description</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Generated Description</div>
+            <div id="output-desc" class="output-box" style="min-height:200px">Description will appear here...</div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('desc')">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAGS & HASHTAGS -->
+      <div id="gentab-tags" class="gentab" style="display:none">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Tags & Hashtag Generator</div>
+            <div class="field"><label>Topic</label><input id="tags-topic" placeholder="Enter your content topic" /></div>
+            <div class="field"><label>Platform</label><select id="tags-platform"><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Twitter</option></select></div>
+            <div class="field"><label>Count</label>
+              <div class="chips">
+                <div class="chip" onclick="toggleChip(this)">10 tags</div>
+                <div class="chip selected" onclick="toggleChip(this)">20 tags</div>
+                <div class="chip" onclick="toggleChip(this)">30 tags</div>
+              </div>
+            </div>
+            <div class="field"><label>Include</label>
+              <div class="chips">
+                <div class="chip selected" onclick="toggleChip(this)">Trending</div>
+                <div class="chip selected" onclick="toggleChip(this)">Niche-specific</div>
+                <div class="chip" onclick="toggleChip(this)">Broad reach</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('tags')">🏷️ Generate Tags</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Generated Tags</div>
+            <div id="output-tags" style="margin-top:10px;min-height:120px">Tags will appear here as clickable chips...</div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('tags')">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAPTION -->
+      <div id="gentab-caption" class="gentab" style="display:none">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Caption Generator</div>
+            <div class="field"><label>Topic / Post About</label><input id="cap-topic" placeholder="Describe your post..." /></div>
+            <div class="field"><label>Tone</label>
+              <div class="chips">
+                <div class="chip selected" onclick="toggleChip(this)">Casual</div>
+                <div class="chip" onclick="toggleChip(this)">Funny</div>
+                <div class="chip" onclick="toggleChip(this)">Inspiring</div>
+                <div class="chip" onclick="toggleChip(this)">Professional</div>
+                <div class="chip" onclick="toggleChip(this)">Romantic</div>
+              </div>
+            </div>
+            <div class="field"><label>Include Emoji?</label>
+              <div class="chips"><div class="chip selected" onclick="toggleChip(this)">Yes ✅</div><div class="chip" onclick="toggleChip(this)">No</div></div>
+            </div>
+            <div class="field"><label>Language</label><select id="cap-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select></div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('caption')">✍️ Generate Caption</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Generated Caption</div>
+            <div id="output-caption" class="output-box" style="min-height:200px">Caption will appear here...</div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('caption')">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOOK -->
+      <div id="gentab-hook" class="gentab" style="display:none">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Hook Line Generator</div>
+            <div class="field"><label>Content Topic</label><input id="hook-topic" placeholder="What is your video/post about?" /></div>
+            <div class="field"><label>Platform</label><select id="hook-platform"><option>YouTube Shorts</option><option>TikTok</option><option>Instagram Reels</option><option>Facebook</option></select></div>
+            <div class="field"><label>Hook Style</label>
+              <div class="chips">
+                <div class="chip selected" onclick="toggleChip(this)">Shocking Fact</div>
+                <div class="chip" onclick="toggleChip(this)">Question</div>
+                <div class="chip" onclick="toggleChip(this)">Story Start</div>
+                <div class="chip" onclick="toggleChip(this)">Bold Claim</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('hook')">🎣 Generate Hooks</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Generated Hooks</div>
+            <div id="output-hook" class="output-box" style="min-height:200px">Hook lines will appear here...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div id="gentab-cta" class="gentab" style="display:none">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Call-to-Action Generator</div>
+            <div class="field"><label>Goal</label>
+              <div class="chips">
+                <div class="chip selected" onclick="toggleChip(this)">Subscribe</div>
+                <div class="chip" onclick="toggleChip(this)">Follow</div>
+                <div class="chip" onclick="toggleChip(this)">Buy</div>
+                <div class="chip" onclick="toggleChip(this)">Share</div>
+                <div class="chip" onclick="toggleChip(this)">Comment</div>
+                <div class="chip" onclick="toggleChip(this)">Visit Link</div>
+              </div>
+            </div>
+            <div class="field"><label>Platform</label><select id="cta-platform"><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Facebook</option></select></div>
+            <div class="field"><label>Language</label><select id="cta-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select></div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('cta')">🎯 Generate CTAs</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Generated CTAs</div>
+            <div id="output-cta" class="output-box" style="min-height:200px">CTAs will appear here...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCRIPT WRITER ========== -->
+    <div id="page-script" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">📝 Script Writer</div></div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title">Script Type</div>
+        <div class="grid3" style="grid-template-columns:repeat(6,1fr);gap:10px" id="script-types">
+          <div class="script-type selected" onclick="selectScriptType(this,'YouTube Shorts')"><div class="st-icon">📱</div><div class="st-name">Shorts</div></div>
+          <div class="script-type" onclick="selectScriptType(this,'Long YouTube Video')"><div class="st-icon">🎥</div><div class="st-name">Long Video</div></div>
+          <div class="script-type" onclick="selectScriptType(this,'Instagram Reel')"><div class="st-icon">📸</div><div class="st-name">Reel</div></div>
+          <div class="script-type" onclick="selectScriptType(this,'Social Media Post')"><div class="st-icon">📄</div><div class="st-name">Post</div></div>
+          <div class="script-type" onclick="selectScriptType(this,'Instagram Story')"><div class="st-icon">💫</div><div class="st-name">Story</div></div>
+          <div class="script-type" onclick="selectScriptType(this,'Podcast Script')"><div class="st-icon">🎙️</div><div class="st-name">Podcast</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Script Details</div>
+          <div class="field"><label>Topic / Title</label><input id="script-topic" placeholder="What is your script about?" /></div>
+          <div class="field"><label>Key Points (optional)</label><textarea id="script-points" placeholder="• Main point 1&#10;• Main point 2&#10;• Main point 3" style="min-height:80px"></textarea></div>
+          <div class="field"><label>Tone</label>
+            <div class="chips">
+              <div class="chip selected" onclick="toggleChip(this)">Engaging</div>
+              <div class="chip" onclick="toggleChip(this)">Educational</div>
+              <div class="chip" onclick="toggleChip(this)">Funny</div>
+              <div class="chip" onclick="toggleChip(this)">Serious</div>
+              <div class="chip" onclick="toggleChip(this)">Storytelling</div>
+            </div>
+          </div>
+          <div class="field"><label>Duration</label>
+            <div class="chips">
+              <div class="chip selected" onclick="toggleChip(this)">30 sec</div>
+              <div class="chip" onclick="toggleChip(this)">60 sec</div>
+              <div class="chip" onclick="toggleChip(this)">3 min</div>
+              <div class="chip" onclick="toggleChip(this)">5-10 min</div>
+              <div class="chip" onclick="toggleChip(this)">15+ min</div>
+            </div>
+          </div>
+          <div class="field"><label>Language</label><select id="script-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select></div>
+          <button class="btn btn-primary" style="width:100%" onclick="generateScript()">📝 Generate Script</button>
+        </div>
+        <div class="card">
+          <div class="card-title" id="script-output-title">Generated Script</div>
+          <div id="output-script" class="output-box" style="min-height:340px;max-height:500px;overflow-y:auto">Script will appear here with sections like [HOOK], [INTRO], [MAIN], [CTA]...</div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn btn-ghost" style="flex:1" onclick="copyText('output-script')">📋 Copy</button>
+            <button class="btn btn-primary" style="flex:1" onclick="generateScript()">🔄 Regenerate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== CHAT ========== -->
+    <div id="page-chat" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">🤖 Chat with AI</div>
+        <button class="btn btn-ghost" onclick="clearChat()">🗑️ Clear Chat</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="chat-box">
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg ai">👋 Hello! I'm your AI content assistant. Ask me anything about content creation, ideas, captions, scripts, or strategies!</div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="chat-input" placeholder="Ask anything about content creation..." onkeydown="if(event.key==='Enter')sendChat()" />
+            <button class="btn btn-primary" onclick="sendChat()">Send ➤</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="card-title" style="margin-bottom:10px;color:var(--text2);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Quick Prompts</div>
+        <div class="chips">
+          <div class="chip" onclick="quickPrompt('Give me viral content ideas for Instagram')">💡 Viral Ideas</div>
+          <div class="chip" onclick="quickPrompt('How to grow my YouTube channel fast?')">📈 Grow Channel</div>
+          <div class="chip" onclick="quickPrompt('Write a bio for my Instagram profile')">👤 Write Bio</div>
+          <div class="chip" onclick="quickPrompt('Best posting times for maximum engagement?')">⏰ Best Times</div>
+          <div class="chip" onclick="quickPrompt('How to monetize my content?')">💰 Monetize</div>
+          <div class="chip" onclick="quickPrompt('Give me 10 trending hashtags for today')">🔥 Trending Tags</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MEDIA SEARCH ========== -->
+    <div id="page-media" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">🎬 Media Search</div></div>
+      <div class="tabs" id="media-tabs">
+        <div class="tab active" onclick="switchTab('media','photos')">📷 Photos</div>
+        <div class="tab" onclick="switchTab('media','videos')">🎥 Videos</div>
+      </div>
+
+      <div id="mediatab-photos">
+        <div class="card" style="margin-bottom:18px">
+          <div style="display:flex;gap:10px;align-items:center">
+            <input id="photo-search" placeholder="Search for photos..." style="flex:1" onkeydown="if(event.key==='Enter')searchMedia('photos')" />
+            <div class="chips" style="margin:0">
+              <div class="chip selected" onclick="toggleChip(this)" id="pexels-chip">Pexels</div>
+              <div class="chip" onclick="toggleChip(this)" id="pixabay-chip">Pixabay</div>
+            </div>
+            <button class="btn btn-primary" onclick="searchMedia('photos')">🔍 Search</button>
+          </div>
+        </div>
+        <div class="card-title" style="color:var(--text2);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px">Quick Searches</div>
+        <div class="chips" style="margin-bottom:16px">
+          <div class="chip" onclick="quickSearch('nature')">🌿 Nature</div>
+          <div class="chip" onclick="quickSearch('business')">💼 Business</div>
+          <div class="chip" onclick="quickSearch('technology')">💻 Tech</div>
+          <div class="chip" onclick="quickSearch('food')">🍕 Food</div>
+          <div class="chip" onclick="quickSearch('travel')">✈️ Travel</div>
+          <div class="chip" onclick="quickSearch('fitness')">💪 Fitness</div>
+          <div class="chip" onclick="quickSearch('fashion')">👗 Fashion</div>
+        </div>
+        <div id="photos-grid" class="media-grid">
+          <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">Search for photos to get started</div>
+        </div>
+        <div id="photos-load-more" style="display:none;text-align:center;margin-top:14px">
+          <button class="btn btn-ghost" onclick="loadMorePhotos()">Load More Photos</button>
+        </div>
+      </div>
+
+      <div id="mediatab-videos" style="display:none">
+        <div class="card" style="margin-bottom:18px">
+          <div style="display:flex;gap:10px;align-items:center">
+            <input id="video-search" placeholder="Search for videos..." style="flex:1" onkeydown="if(event.key==='Enter')searchMedia('videos')" />
+            <div class="chips" style="margin:0">
+              <div class="chip selected" onclick="toggleChip(this)" id="pexels-vid-chip">Pexels</div>
+              <div class="chip" onclick="toggleChip(this)" id="pixabay-vid-chip">Pixabay</div>
+            </div>
+            <button class="btn btn-primary" onclick="searchMedia('videos')">🔍 Search</button>
+          </div>
+        </div>
+        <div id="videos-grid" class="media-grid">
+          <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">Search for videos to get started</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== VIDEO & IMAGE AI TOOLS ========== -->
+    <div id="page-videotools" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">🎥 Video & Image AI Tools</div></div>
+      <div class="alert alert-info">💡 Yeh tools directly app ke andar nahi chalte — "Open Tool" click karo, naya tab khulega. Apna prompt copy karke wahan paste karo!</div>
+
+      <!-- PROMPT GENERATOR -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title">✨ AI Prompt Generator for Video/Image</div>
+        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+          <div class="field" style="flex:1;margin:0">
+            <label>Topic ya Idea likho</label>
+            <input id="vt-topic" placeholder="e.g. Sunset on a beach with cinematic vibes..." />
+          </div>
+          <div class="field" style="margin:0">
+            <label>Style</label>
+            <select id="vt-style">
+              <option>Cinematic</option>
+              <option>Anime</option>
+              <option>Realistic</option>
+              <option>Cartoon</option>
+              <option>3D Render</option>
+              <option>Vintage</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="generateVideoPrompt()">🪄 Generate Prompt</button>
+        </div>
+        <div id="vt-prompt-output" class="output-box" style="margin-top:12px;min-height:60px;display:none;position:relative">
+          <button class="copy-btn" onclick="copyText('vt-prompt-output')">📋 Copy</button>
+          <span id="vt-prompt-text"></span>
+        </div>
+      </div>
+
+      <!-- AI VIDEO TOOLS -->
+      <div class="card-title" style="color:var(--text2);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">🎬 AI Video Generators</div>
+      <div class="grid3" style="margin-bottom:24px">
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://vibe.ai/video')">
+          <div class="app-icon">🌊</div>
+          <div class="app-name">VIBE AI</div>
+          <div class="app-sub">Text/Image → Video</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free to start</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://3dflix.ai')">
+          <div class="app-icon">🎭</div>
+          <div class="app-name">3D FlixAI</div>
+          <div class="app-sub">Anime/Cinematic Video</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free tier</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://livensa.ai')">
+          <div class="app-icon">✨</div>
+          <div class="app-name">Livensa AI</div>
+          <div class="app-sub">Text/Photo → Video</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Quick generation</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://selfyz.ai')">
+          <div class="app-icon">🤳</div>
+          <div class="app-name">SelfyzAI</div>
+          <div class="app-sub">Selfie → Animated Video</div>
+          <div class="app-sub" style="color:var(--yellow);margin-top:4px">Avatar effects</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://apps.apple.com/app/ai-video-generator-maker/id1638418935')">
+          <div class="app-icon">📱</div>
+          <div class="app-name">HubX AI Video</div>
+          <div class="app-sub">All-in-one creator</div>
+          <div class="app-sub" style="color:var(--yellow);margin-top:4px">Text → Animation</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://runwayml.com')">
+          <div class="app-icon">🎞️</div>
+          <div class="app-name">Runway ML</div>
+          <div class="app-sub">Professional AI Video</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free credits</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+      </div>
+
+      <!-- AI IMAGE TOOLS -->
+      <div class="card-title" style="color:var(--text2);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">🖼️ AI Image Generators</div>
+      <div class="grid3">
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://gemini.google.com')">
+          <div class="app-icon">🔴</div>
+          <div class="app-name">Google Gemini</div>
+          <div class="app-sub">AI Image Generation</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://www.bing.com/images/create')">
+          <div class="app-icon">🔷</div>
+          <div class="app-name">Bing Image Creator</div>
+          <div class="app-sub">DALL-E powered</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free daily credits</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://www.canva.com/ai-image-generator')">
+          <div class="app-icon">🎨</div>
+          <div class="app-name">Canva AI</div>
+          <div class="app-sub">Text to Image + Design</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free tier</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://grok.com')">
+          <div class="app-icon">⚡</div>
+          <div class="app-name">Grok AI</div>
+          <div class="app-sub">Aurora image model</div>
+          <div class="app-sub" style="color:var(--yellow);margin-top:4px">Limited free</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://ideogram.ai')">
+          <div class="app-icon">🎯</div>
+          <div class="app-name">Ideogram AI</div>
+          <div class="app-sub">Best for text-in-images</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">Free credits daily</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://leonardo.ai')">
+          <div class="app-icon">🦁</div>
+          <div class="app-name">Leonardo AI</div>
+          <div class="app-sub">High quality images</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">150 free credits/day</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== EDITING APPS ========== -->
+    <div id="page-editing" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">🎨 Editing Apps</div></div>
+      <div class="alert alert-info">📱 Tap any app to open it directly</div>
+      <div class="grid3">
+        <a href="https://www.capcut.com" target="_blank" class="editing-app">
+          <div class="app-icon">🎬</div>
+          <div class="app-name">CapCut</div>
+          <div class="app-sub">Video Editing & Effects</div>
+        </a>
+        <a href="https://www.canva.com" target="_blank" class="editing-app">
+          <div class="app-icon">🎨</div>
+          <div class="app-name">Canva</div>
+          <div class="app-sub">Design & Graphics</div>
+        </a>
+        <a href="https://www.inshot.com" target="_blank" class="editing-app">
+          <div class="app-icon">✂️</div>
+          <div class="app-name">InShot</div>
+          <div class="app-sub">Video & Photo Editor</div>
+        </a>
+        <a href="https://www.vlognow.me" target="_blank" class="editing-app">
+          <div class="app-icon">🎞️</div>
+          <div class="app-name">VN (VlogNow)</div>
+          <div class="app-sub">Professional Video Edit</div>
+        </a>
+        <a href="https://spark.adobe.com" target="_blank" class="editing-app">
+          <div class="app-icon">⚡</div>
+          <div class="app-name">Adobe Express</div>
+          <div class="app-sub">Quick Creative Content</div>
+        </a>
+        <a href="https://www.picsart.com" target="_blank" class="editing-app">
+          <div class="app-icon">🖼️</div>
+          <div class="app-name">PicsArt</div>
+          <div class="app-sub">Photo & Sticker Editor</div>
+        </a>
+        <a href="https://filmora.wondershare.com" target="_blank" class="editing-app">
+          <div class="app-icon">🎥</div>
+          <div class="app-name">Filmora</div>
+          <div class="app-sub">Advanced Video Editor</div>
+        </a>
+        <a href="https://remove.bg" target="_blank" class="editing-app">
+          <div class="app-icon">✂️</div>
+          <div class="app-name">Remove.bg</div>
+          <div class="app-sub">Background Remover</div>
+        </a>
+        <a href="https://www.kinemaster.com" target="_blank" class="editing-app">
+          <div class="app-icon">📽️</div>
+          <div class="app-name">KineMaster</div>
+          <div class="app-sub">Mobile Video Studio</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ========== 7-DAY CONTENT PLANNER ========== -->
+    <div id="page-planner" class="page" style="margin-top:40px">
+      <div class="topbar">
+        <div>
+          <div class="page-title">🗓️ 7-Day Content Planner</div>
+          <div style="color:var(--text2);font-size:13px;margin-top:4px">Plan karo, save karo, social media pe post karo</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost" onclick="clearPlanner()">🗑️ Clear All</button>
+          <button class="btn btn-primary" onclick="exportPlanner()">📤 Export</button>
+        </div>
+      </div>
+
+      <!-- Platform filter -->
+      <div class="card" style="margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div class="field" style="margin:0;flex:1">
+            <label>Default Platform</label>
+            <select id="planner-platform">
+              <option>YouTube</option><option>Instagram</option><option>TikTok</option>
+              <option>Facebook</option><option>Twitter/X</option><option>LinkedIn</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0;flex:1">
+            <label>Week Starting</label>
+            <input type="date" id="planner-start-date" />
+          </div>
+          <button class="btn btn-ghost" onclick="setTodayDate()">📅 This Week</button>
+        </div>
+      </div>
+
+      <!-- 7 Day Cards -->
+      <div id="planner-days" style="display:flex;flex-direction:column;gap:14px"></div>
+
+      <!-- Add Entry Panel -->
+      <div class="card" style="margin-top:18px" id="planner-add-panel">
+        <div class="card-title">➕ Add Content to a Day</div>
+        <div class="grid2">
+          <div>
+            <div class="field">
+              <label>Select Day</label>
+              <select id="planner-day-select">
+                <option value="0">Day 1</option><option value="1">Day 2</option>
+                <option value="2">Day 3</option><option value="3">Day 4</option>
+                <option value="4">Day 5</option><option value="5">Day 6</option>
+                <option value="6">Day 7</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Platform</label>
+              <select id="planner-entry-platform">
+                <option>YouTube</option><option>Instagram</option><option>TikTok</option>
+                <option>Facebook</option><option>Twitter/X</option><option>LinkedIn</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Post Time</label>
+              <input type="time" id="planner-time" value="18:00" />
+            </div>
+            <div class="field">
+              <label>Content Type</label>
+              <select id="planner-content-type">
+                <option>📹 Video</option><option>📸 Photo Post</option><option>📖 Story</option>
+                <option>🎵 Reel/Short</option><option>📝 Text Post</option><option>🔴 Live</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <label>Title</label>
+              <input id="planner-title" placeholder="Post ka title..." />
+            </div>
+            <div class="field">
+              <label>Caption</label>
+              <textarea id="planner-caption" placeholder="Caption paste karo ya likho..." style="min-height:70px"></textarea>
+            </div>
+            <div class="field">
+              <label>Description</label>
+              <textarea id="planner-desc" placeholder="Description paste karo..." style="min-height:60px"></textarea>
+            </div>
+            <div class="field">
+              <label>Tags/Hashtags</label>
+              <input id="planner-tags" placeholder="#tag1 #tag2 #tag3..." />
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <button class="btn btn-ghost" onclick="pasteFromGenerator()">📋 Paste from Generator</button>
+          <button class="btn btn-primary" style="flex:1" onclick="savePlannerEntry()">💾 Save to Planner</button>
+        </div>
+        <div id="planner-save-msg" style="display:none;color:var(--green);font-size:13px;margin-top:8px">✅ Saved!</div>
+      </div>
+    </div>
+
+    <!-- ========== SCHEDULE ========== -->
+    <div id="page-schedule" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">📅 Best Posting Schedule</div></div>
+
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title">Select Platform</div>
+        <div class="chips" id="schedule-platforms">
+          <div class="chip selected" onclick="showSchedule(this,'youtube')">📺 YouTube</div>
+          <div class="chip" onclick="showSchedule(this,'instagram')">📸 Instagram</div>
+          <div class="chip" onclick="showSchedule(this,'tiktok')">🎵 TikTok</div>
+          <div class="chip" onclick="showSchedule(this,'facebook')">👥 Facebook</div>
+          <div class="chip" onclick="showSchedule(this,'twitter')">🐦 Twitter/X</div>
+          <div class="chip" onclick="showSchedule(this,'snapchat')">👻 Snapchat</div>
+          <div class="chip" onclick="showSchedule(this,'linkedin')">💼 LinkedIn</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Best Days to Post</div>
+          <div class="schedule-grid" id="schedule-days"></div>
+          <div id="schedule-tip" style="font-size:13px;color:var(--text2);margin-top:10px;line-height:1.6"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Best Times (by Day)</div>
+          <div id="schedule-times" style="font-size:13.5px;line-height:1.8"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="card-title">All Platforms Overview</div>
+        <div id="all-platforms-schedule"></div>
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS ========== -->
+    <div id="page-settings" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">⚙️ Settings & API Keys</div></div>
+
+      <!-- QUOTA STATUS -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title">📊 Daily Quota Status</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Auto-resets every midnight. AI auto-switches when quota fills.</div>
+        <div id="quota-status"></div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px;font-size:13px">
+          <span style="color:var(--text2)">Currently using:</span>
+          <span id="active-provider-badge" style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border)">Auto</span>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- AI KEYS -->
+        <div class="card">
+          <div class="card-title">🤖 AI Provider Keys</div>
+          <div class="alert alert-info" style="margin-bottom:14px;font-size:12px">
+            🔄 Auto-routing: <strong>Cerebras → Gemini → Groq → OpenRouter</strong><br>
+            Quota fills automatically switch to next provider.
+          </div>
+
+          <div class="field">
+            <label>🟠 Cerebras Key (1,700 req/day — Priority 1)</label>
+            <input id="cerebras-key" type="password" placeholder="csk-..." />
+          </div>
+          <div class="field">
+            <label>🔴 Gemini Key (1,500 req/day — Priority 2)</label>
+            <input id="gemini-key" type="password" placeholder="AIza..." />
+          </div>
+          <div class="field">
+            <label>Model (Gemini)</label>
+            <select id="gemini-model">
+              <option value="gemini-2.5-flash-lite-preview-06-17">Gemini 2.5 Flash Lite ⭐ (1,000/day)</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash (250/day)</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro (100/day)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>🟣 Groq Key (1,000 req/day — Priority 3)</label>
+            <input id="groq-key" type="password" placeholder="gsk_..." />
+          </div>
+          <div class="field">
+            <label>Model (Groq)</label>
+            <select id="groq-model">
+              <option value="llama-3.3-70b-versatile">Llama 3.3 70B ⭐ (Best)</option>
+              <option value="llama-4-scout-17b-16e-instruct">Llama 4 Scout</option>
+              <option value="llama3.1-8b-instant">Llama 3.1 8B (Fastest)</option>
+              <option value="qwen-qwq-32b">Qwen3 32B (Reasoning)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>🔵 OpenRouter Key (200 req/day — Backup)</label>
+            <input id="openrouter-key" type="password" placeholder="sk-or-v1-..." />
+          </div>
+
+          <div class="field">
+            <label>Override: Force specific provider (optional)</label>
+            <select id="ai-provider-manual">
+              <option value="">🔄 Auto (Recommended)</option>
+              <option value="cerebras">🟠 Always Cerebras</option>
+              <option value="gemini">🔴 Always Gemini</option>
+              <option value="groq">🟣 Always Groq</option>
+              <option value="openrouter">🔵 Always OpenRouter</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%" onclick="saveAllSettings()">💾 Save All Settings</button>
+          <div id="settings-msg" style="margin-top:10px;font-size:13px;color:var(--green);display:none">✅ Settings saved!</div>
+        </div>
+
+        <!-- MEDIA + PREFS -->
+        <div class="card">
+          <div class="card-title">📷 Media API Keys</div>
+          <div class="field">
+            <label>Pexels API Key (200 req/hr, 20K/month)</label>
+            <input id="pexels-key" type="password" placeholder="Enter Pexels API key" />
+          </div>
+          <div class="field">
+            <label>Pixabay API Key</label>
+            <input id="pixabay-key" type="password" placeholder="Enter Pixabay API key" />
+          </div>
+          <button class="btn btn-ghost" style="width:100%" onclick="saveMediaKeys()">💾 Save Media Keys</button>
+          <div id="media-settings-msg" style="margin-top:10px;font-size:13px;color:var(--green);display:none">✅ Media keys saved!</div>
+
+          <div class="divider"></div>
+          <div class="card-title">🎯 Content Preferences</div>
+          <div class="field"><label>Default Language</label>
+            <select id="pref-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select>
+          </div>
+          <div class="field"><label>Your Niche</label>
+            <input id="pref-niche" placeholder="e.g. Tech, Gaming, Food..." />
+          </div>
+          <button class="btn btn-ghost" style="width:100%" onclick="savePrefs()">💾 Save Preferences</button>
+
+          <div class="divider"></div>
+          <div class="card-title">🗺️ AI Routing Logic</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.8">
+            🟠 <strong>Cerebras</strong> → Title, Tags, Hook, CTA (fast tasks)<br>
+            🔴 <strong>Gemini</strong> → Description, Topics (creative tasks)<br>
+            🟣 <strong>Groq</strong> → Script, Caption, Chat (long tasks)<br>
+            🔵 <strong>OpenRouter</strong> → Backup for all
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MEDIA PREVIEW MODAL -->
+<div id="media-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;display:none;align-items:center;justify-content:center" onclick="closeModal()">
+  <div style="max-width:90vw;max-height:90vh;position:relative" onclick="event.stopPropagation()">
+    <button onclick="closeModal()" style="position:absolute;top:-36px;right:0;background:none;border:none;color:#fff;font-size:24px;cursor:pointer">✕</button>
+    <img id="modal-img" style="max-width:100%;max-height:80vh;border-radius:12px;display:none" />
+    <video id="modal-video" style="max-width:100%;max-height:80vh;border-radius:12px;display:none" controls></video>
+    <div style="display:flex;gap:10px;margin-top:12px;justify-content:center">
+      <a id="modal-download" href="#" download target="_blank" class="btn btn-primary">⬇️ Download</a>
+      <a id="modal-source" href="#" target="_blank" class="btn btn-ghost">🔗 View Source</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== STATE ====================
+let currentPage = 'topics';
+let topicOffset = 0;
+let chatHistory = [];
+let selectedScriptType = 'YouTube Shorts';
+let currentMediaPage = 1;
+let lastPhotoQuery = '';
+
+// ==================== DEFAULTS (pre-loaded API keys) ====================
+const DEFAULTS = {
+  cerebrasKey: 'csk-y8nf65xvk4jmk4rynnr85ncecp3563vhv6vndm2kh6yt6x8w',
+  geminiKey: 'AIzaSyBoCAD3-2-dho9b3aVjTv8beAmFmpGcJx0',
+  groqKey: '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',
+  openrouterKey: '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',
+  pexelsKey: 'OjTvja4XHKEp5JzVnncmNCCVrfdcQES1L7pFYUkssOLfN4J3Em0EsQ9F',
+  pixabayKey: '55517448-7ca8bb80ec45451ea7aaba804'
+};
+
+// ==================== AI ROUTING CONFIG ====================
+// Priority order: Cerebras → Gemini → Groq → OpenRouter
+// Task-based routing: short tasks → Cerebras, creative → Gemini, long/chat → Groq
+const AI_ROUTING = {
+  title:   'groq',
+  tags:    'cerebras',
+  hook:    'groq',
+  cta:     'cerebras',
+  caption: 'cerebras',
+  desc:    'gemini',
+  topics:  'gemini',
+  script:  'groq',
+  chat:    'groq',
+  pack:    'groq'
+};
+
+// User daily request limit
+const USER_LIMIT = 30;
+
+function getUserRequests() {
+  const today = new Date().toDateString();
+  const saved = localStorage.getItem('user_req_date');
+  if (saved !== today) {
+    localStorage.setItem('user_req_date', today);
+    localStorage.setItem('user_req_count', '0');
+    return 0;
+  }
+  return parseInt(localStorage.getItem('user_req_count') || '0');
+}
+
+function incrementUserRequest() {
+  const count = getUserRequests() + 1;
+  localStorage.setItem('user_req_count', count.toString());
+  updateUserLimitDisplay();
+  return count;
+}
+
+function updateUserLimitDisplay() {
+  const used = getUserRequests();
+  const remaining = USER_LIMIT - used;
+  const el = document.getElementById('user-req-display');
+  if (!el) return;
+  const color = remaining <= 5 ? '#fc5c7d' : remaining <= 10 ? '#fbbf24' : '#4ade80';
+  el.innerHTML = `<span style="color:${color};font-weight:700">${remaining}</span>/<span>${USER_LIMIT}</span> requests left today`;
+}
+
+// Daily quota tracker (resets midnight)
+const QUOTA = {
+  cerebras: { used: 0, max: 14400, key: 'quota_cerebras' },
+  gemini:   { used: 0, max: 1500, key: 'quota_gemini' },
+  groq:     { used: 0, max: 14400, key: 'quota_groq' }
+};
+
+function loadQuota() {
+  const today = new Date().toDateString();
+  const savedDate = localStorage.getItem('quota_date');
+  if (savedDate !== today) {
+    // Reset all quotas at midnight
+    Object.keys(QUOTA).forEach(p => localStorage.setItem(QUOTA[p].key, '0'));
+    localStorage.setItem('quota_date', today);
+  }
+  Object.keys(QUOTA).forEach(p => {
+    QUOTA[p].used = parseInt(localStorage.getItem(QUOTA[p].key) || '0');
+  });
+}
+
+function incrementQuota(provider) {
+  QUOTA[provider].used++;
+  localStorage.setItem(QUOTA[provider].key, QUOTA[provider].used.toString());
+  updateQuotaDisplay();
+}
+
+function getAvailableProvider(preferred) {
+  const order = [preferred, 'groq', 'cerebras', 'gemini'];
+  const seen = new Set();
+  for (const p of order) {
+    if (seen.has(p)) continue;
+    seen.add(p);
+    if (QUOTA[p] && QUOTA[p].used < QUOTA[p].max) return p;
+  }
+  return 'gemini';
+}
+
+function updateQuotaDisplay() {
+  const el = document.getElementById('quota-status');
+  if (!el) return;
+  el.innerHTML = Object.keys(QUOTA).map(p => {
+    const q = QUOTA[p];
+    const pct = Math.round((q.used / q.max) * 100);
+    const color = pct > 80 ? 'var(--accent2)' : pct > 50 ? 'var(--yellow)' : 'var(--green)';
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span>${p.charAt(0).toUpperCase()+p.slice(1)}</span>
+        <span style="color:${color}">${q.used}/${q.max}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function initApp() {
+  updateUserLimitDisplay();
+  loadQuota();
+  updateQuotaDisplay();
+}
+
+function loadSettings() {
+  document.getElementById('cerebras-key').value = localStorage.getItem('cerebras_key') || '';
+  document.getElementById('gemini-key').value = localStorage.getItem('gemini_key') || '';
+  document.getElementById('gemini-model').value = localStorage.getItem('gemini_model') || 'gemini-2.5-flash-lite-preview-06-17';
+  document.getElementById('groq-key').value = localStorage.getItem('groq_key') || '';
+  document.getElementById('groq-model').value = localStorage.getItem('groq_model') || 'llama-3.3-70b-versatile';
+  document.getElementById('openrouter-key').value = localStorage.getItem('openrouter_key') || '';
+  document.getElementById('ai-provider-manual').value = localStorage.getItem('ai_provider_manual') || '';
+  document.getElementById('pexels-key').value = localStorage.getItem('pexels_key') || '';
+  document.getElementById('pixabay-key').value = localStorage.getItem('pixabay_key') || '';
+  loadQuota();
+  updateQuotaDisplay();
+}
+
+function saveAllSettings() {
+  const fields = {
+    'cerebras_key': 'cerebras-key',
+    'gemini_key': 'gemini-key',
+    'gemini_model': 'gemini-model',
+    'groq_key': 'groq-key',
+    'groq_model': 'groq-model',
+    'openrouter_key': 'openrouter-key',
+    'ai_provider_manual': 'ai-provider-manual'
+  };
+  Object.entries(fields).forEach(([k, id]) => {
+    const val = document.getElementById(id)?.value;
+    if (val !== undefined) localStorage.setItem(k, val);
+  });
+  const msg = document.getElementById('settings-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+
+function saveMediaKeys() {
+  localStorage.setItem('pexels_key', document.getElementById('pexels-key').value);
+  localStorage.setItem('pixabay_key', document.getElementById('pixabay-key').value);
+  const msg = document.getElementById('media-settings-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+
+function savePrefs() {
+  localStorage.setItem('pref_lang', document.getElementById('pref-lang').value);
+  localStorage.setItem('pref_niche', document.getElementById('pref-niche').value);
+  alert('✅ Preferences saved!');
+}
+
+function openTool(url) {
+  window.open(url, '_blank');
+}
+
+async function generateVideoPrompt() {
+  const topic = document.getElementById('vt-topic').value.trim();
+  const style = document.getElementById('vt-style').value;
+  if (!topic) { alert('Topic likho pehle!'); return; }
+
+  const btn = event.target;
+  btn.textContent = '⏳ Generating...';
+  btn.disabled = true;
+
+  const prompt = `Write a detailed AI video/image generation prompt for: "${topic}"
+Style: ${style}
+Include: Visual details, lighting, camera angle, mood, colors, quality tags.
+Keep it under 100 words. Make it powerful and specific for tools like Sora, Kling, MidJourney.
+Return ONLY the prompt, no explanation.`;
+
+  try {
+    const result = await callAI(prompt, 'title');
+    document.getElementById('vt-prompt-text').textContent = result;
+    document.getElementById('vt-prompt-output').style.display = 'block';
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+  btn.textContent = '🪄 Generate Prompt';
+  btn.disabled = false;
+}
+
+// ==================== AI CALL — SMART ROUTING ====================
+async function callAI(prompt, taskType, skipUserLimit) {
+  // Check user daily limit (skip for bulk pack calls)
+  if (!skipUserLimit) {
+    const used = getUserRequests();
+    if (used >= USER_LIMIT) {
+      throw new Error('Aapki 30 daily requests khatam ho gayi! Kal wapas aao. 🙏');
+    }
+    incrementUserRequest();
+  }
+
+  const manualProvider = localStorage.getItem('ai_provider_manual');
+  const preferred = manualProvider || AI_ROUTING[taskType] || 'groq';
+  const provider = getAvailableProvider(preferred);
+
+  let result;
+  try {
+    result = await callProvider(provider, prompt);
+    incrementQuota(provider);
+    showProviderBadge(provider);
+    return result;
+  } catch(e) {
+    const fallbacks = ['groq','cerebras','gemini'].filter(p => p !== provider);
+    for (const fb of fallbacks) {
+      if (QUOTA[fb] && QUOTA[fb].used < QUOTA[fb].max) {
+        try {
+          result = await callProvider(fb, prompt);
+          incrementQuota(fb);
+          showProviderBadge(fb, true);
+          return result;
+        } catch(e2) { continue; }
+      }
+    }
+    throw new Error('AI error aaya! Dobara try karo.');
+  }
+}
+
+function showProviderBadge(provider, fallback) {
+  const badge = document.getElementById('active-provider-badge');
+  if (!badge) return;
+  const colors = { cerebras:'#f97316', gemini:'#3b82f6', groq:'#7c5cfc', openrouter:'#10b981' };
+  const icons = { cerebras:'🟠', gemini:'🔴', groq:'🟣', openrouter:'🔵' };
+  badge.innerHTML = `${icons[provider]} ${provider.charAt(0).toUpperCase()+provider.slice(1)}${fallback?' (fallback)':''}`;
+  badge.style.background = colors[provider]+'22';
+  badge.style.borderColor = colors[provider]+'66';
+  badge.style.color = colors[provider];
+}
+
+async function callProvider(provider, prompt) {
+  if (provider === 'gemini') {
+    const key = localStorage.getItem('gemini_key') || DEFAULTS.geminiKey;
+    let res;
+    try { res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    }); } catch(e) { throw new Error('Gemini network error: ' + e.message); }
+    const data = await res.json();
+    if (!res.ok || !data.candidates) throw new Error((data.error && data.error.message) || 'Gemini error ' + res.status);
+    return data.candidates[0].content.parts[0].text;
+
+  } else if (provider === 'groq') {
+    const key = localStorage.getItem('groq_key') || DEFAULTS.groqKey;
+    let res;
+    try { res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.85 })
+    }); } catch(e) { throw new Error('Groq network error: ' + e.message); }
+    const data = await res.json();
+    if (!res.ok || !data.choices) throw new Error((data.error && data.error.message) || 'Groq error ' + res.status);
+    return data.choices[0].message.content;
+
+  } else {
+    // cerebras
+    const key = localStorage.getItem('cerebras_key') || DEFAULTS.cerebrasKey;
+    let res;
+    try { res = await fetch('https://api.cerebras.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'llama-3.3-70b', messages: [{ role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.85 })
+    }); } catch(e) { throw new Error('Cerebras network error: ' + e.message); }
+    const data = await res.json();
+    if (!res.ok || !data.choices) throw new Error((data.error && data.error.message) || 'Cerebras error ' + res.status);
+    return data.choices[0].message.content;
+  }
+}
+
+// ==================== CONTENT PACK ====================
+async function generatePack() {
+  const topic = document.getElementById('pack-topic').value.trim();
+  if (!topic) { alert('Topic likho pehle!'); return; }
+
+  const platform = document.getElementById('pack-platform').value;
+  const lang = document.getElementById('pack-lang').value;
+  const doTitles = document.getElementById('pack-titles').checked;
+  const doTopics = document.getElementById('pack-topics').checked;
+  const doCaptions = document.getElementById('pack-captions').checked;
+  const doHashtags = document.getElementById('pack-hashtags').checked;
+  const doDesc = document.getElementById('pack-desc').checked;
+  const doHooks = document.getElementById('pack-hooks').checked;
+
+  const tasks = [];
+  if (doTitles) tasks.push('titles');
+  if (doTopics) tasks.push('topics');
+  if (doCaptions) tasks.push('captions');
+  if (doHashtags) tasks.push('hashtags');
+  if (doDesc) tasks.push('desc');
+  if (doHooks) tasks.push('hooks');
+
+  if (tasks.length === 0) { alert('Kuch toh select karo!'); return; }
+
+  // Check user limit
+  const used = getUserRequests();
+  if (used >= USER_LIMIT) {
+    alert('Aapki 30 daily requests khatam ho gayi! Kal wapas aao. 🙏');
+    return;
+  }
+
+  document.getElementById('pack-progress').style.display = 'block';
+  document.getElementById('pack-results').style.display = 'none';
+  ['titles','topics','captions','hashtags','desc','hooks'].forEach(t => {
+    document.getElementById('pack-' + t + '-out').style.display = 'none';
+  });
+
+  let done = 0;
+  const total = tasks.length;
+
+  function setProgress(text, pct) {
+    document.getElementById('pack-progress-text').textContent = text;
+    document.getElementById('pack-progress-bar').style.width = pct + '%';
+  }
+
+  // Count as 1 user request for the whole pack
+  incrementUserRequest();
+
+  for (const task of tasks) {
+    setProgress('Generating ' + task + '... (' + (done+1) + '/' + total + ')', Math.round((done/total)*100));
+    try {
+      let prompt = '';
+      if (task === 'titles') prompt = `Generate 10 compelling ${platform} video titles for: "${topic}"
+Language: ${lang}
+Style: Mix of curiosity, benefit, urgency. Number them 1-10. Return only the numbered list.`;
+      else if (task === 'topics') prompt = `Generate 10 unique content topic ideas related to "${topic}" for ${platform} in ${lang}.
+Format: numbered list 1-10. Each: Topic title - brief description (15 words max). Return only the list.`;
+      else if (task === 'captions') prompt = `Write 3 different ${lang} social media captions for: "${topic}"
+Tone: 1-Casual with emojis, 2-Funny/witty, 3-Inspiring. Include hashtags. Number them 1-3.`;
+      else if (task === 'hashtags') prompt = `Generate exactly 20 trending hashtags for "${topic}" on ${platform}.
+Return as space-separated hashtags with # symbol. Only hashtags, nothing else.`;
+      else if (task === 'desc') prompt = `Write a ${platform} video description for: "${topic}"
+Language: ${lang}
+Include: Hook, key points, call to action, keywords. Keep under 300 words.`;
+      else if (task === 'hooks') prompt = `Write 5 powerful hook lines for a ${platform} video about: "${topic}"
+Styles: shocking fact, question, bold statement, story opener, controversy. Number 1-5.`;
+
+      const result = await callAI(prompt, 'pack', true); // skipUserLimit=true since we counted above
+
+      const outEl = document.getElementById('pack-' + task + '-content');
+      outEl.textContent = result;
+      document.getElementById('pack-' + task + '-out').style.display = 'block';
+      done++;
+      setProgress('✅ ' + task + ' done! (' + done + '/' + total + ')', Math.round((done/total)*100));
+    } catch(e) {
+      document.getElementById('pack-' + task + '-content').textContent = '❌ Error: ' + e.message;
+      document.getElementById('pack-' + task + '-out').style.display = 'block';
+      done++;
+    }
+    // Small delay between calls
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  setProgress('✅ Content Pack ready!', 100);
+  document.getElementById('pack-results').style.display = 'block';
+  updateUserLimitDisplay();
+}
+
+function copyEl(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function copyPackAll() {
+  const sections = ['titles','topics','captions','hashtags','desc','hooks'];
+  let all = '';
+  sections.forEach(s => {
+    const el = document.getElementById('pack-' + s + '-content');
+    if (el && el.textContent && document.getElementById('pack-' + s + '-out').style.display !== 'none') {
+      all += '=== ' + s.toUpperCase() + ' ===
+' + el.textContent + '
+
+';
+    }
+  });
+  navigator.clipboard.writeText(all.trim()).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ All Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy All', 1500);
+  });
+}
+
+// ==================== AI CHAT ====================
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  appendMsg('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+
+  const typingEl = appendMsg('ai', '⏳ Thinking...');
+  try {
+    const systemContext = 'You are ContentAI Pro, an expert social media and content creation assistant. Help users with content ideas, strategies, scripts, captions, hashtags, and growth tips. Be concise, actionable, and creative.';
+    const fullPrompt = systemContext + '\n\nConversation:\n' + chatHistory.map(m => m.role + ': ' + m.content).join('\n') + '\nassistant:';
+    const reply = await callAI(fullPrompt, 'chat');
+    typingEl.textContent = reply;
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    typingEl.textContent = '❌ Error: ' + e.message;
+  }
+}
+
+function appendMsg(role, text) {
+  const container = document.getElementById('chat-messages');
+  const el = document.createElement('div');
+  el.className = 'msg ' + role;
+  el.textContent = text;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+  return el;
+}
+
+function clearChat() {
+  chatHistory = [];
+  const c = document.getElementById('chat-messages');
+  c.innerHTML = '<div class="msg ai">👋 Chat cleared! How can I help you?</div>';
+}
+
+function quickPrompt(text) {
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+// ==================== TOPICS ====================
+async function fetchTopics(next) {
+  if (next) topicOffset += 10; else topicOffset = 0;
+  const cat = document.getElementById('topic-category').value;
+  const platform = getSelectedChip('platform-chips');
+  const lang = document.getElementById('topic-lang').value;
+  const out = document.getElementById('topics-output');
+  out.innerHTML = '<div style="text-align:center;padding:20px"><div class="spinner"></div><span class="loading-text">Generating topics...</span></div>';
+
+  const prompt = `Generate exactly 10 unique, trending ${cat} content topic ideas for ${platform || 'YouTube'} in ${lang}.
+  These are topics ${topicOffset + 1} to ${topicOffset + 10} (vary from previous ones).
+  Format as JSON array: [{"title":"...","description":"...","type":"..."}]
+  Make titles catchy and viral-worthy. Keep descriptions under 20 words. Type can be: Tutorial, Trending, Tips, Story, Challenge, Review, Opinion.
+  Return ONLY the JSON array, no extra text.`;
+
+  try {
+    const result = await callAI(prompt, 'topics');
+    const clean = result.replace(/```json|```/g, '').trim();
+    const topics = JSON.parse(clean);
+    renderTopics(topics);
+    document.getElementById('topics-nav').style.display = 'flex';
+  } catch (e) {
+    out.innerHTML = `<div style="color:var(--accent2);padding:16px">❌ Error: ${e.message}<br><small>Check your API settings</small></div>`;
+  }
+}
+
+function renderTopics(topics) {
+  const colors = ['#7c5cfc','#fc5c7d','#56ccf2','#fbbf24','#4ade80'];
+  const out = document.getElementById('topics-output');
+  out.innerHTML = topics.map((t, i) => `
+    <div class="topic-card" style="margin-bottom:10px" onclick="useTopicForScript('${t.title.replace(/'/g,"\\'")}')">
+      <span class="topic-tag" style="background:${colors[i]}22;color:${colors[i]}">${t.type || 'Topic'}</span>
+      <h4>${t.title}</h4>
+      <p>${t.description}</p>
+    </div>
+  `).join('');
+}
+
+function useTopicForScript(title) {
+  document.getElementById('script-topic').value = title;
+  showPage('script');
+}
+
+// ==================== CONTENT GENERATOR ====================
+async function generateContent(type) {
+  const outputs = {
+    title: { el: 'output-title', input: 'title-topic', platform: 'title-platform', lang: 'title-lang' },
+    desc: { el: 'output-desc', input: 'desc-topic', platform: 'desc-platform', lang: 'desc-lang' },
+    tags: { el: 'output-tags', input: 'tags-topic', platform: 'tags-platform', lang: null },
+    caption: { el: 'output-caption', input: 'cap-topic', platform: null, lang: 'cap-lang' },
+    hook: { el: 'output-hook', input: 'hook-topic', platform: 'hook-platform', lang: null },
+    cta: { el: 'output-cta', input: null, platform: 'cta-platform', lang: 'cta-lang' }
+  };
+  const cfg = outputs[type];
+  const el = document.getElementById(cfg.el);
+  const topic = cfg.input ? document.getElementById(cfg.input).value : '';
+  const platform = cfg.platform ? document.getElementById(cfg.platform).value : '';
+  const lang = cfg.lang ? document.getElementById(cfg.lang).value : 'English';
+
+  if (!topic && type !== 'cta') { el.textContent = '⚠️ Please enter a topic first.'; return; }
+
+  el.innerHTML = '<div class="spinner"></div><span class="loading-text">Generating...</span>';
+
+  let prompt = '';
+  if (type === 'title') prompt = `Generate 10 compelling ${platform} video titles for the topic: "${topic}"\nLanguage: ${lang}\nStyle: Mix of curiosity, benefit, and urgency. Number them 1-10.`;
+  else if (type === 'desc') prompt = `Write a detailed ${platform} video description for: "${topic}"\nLanguage: ${lang}\nInclude: Hook opening, 3-4 key points, timestamps placeholder, links placeholder, call to action, relevant keywords naturally woven in.`;
+  else if (type === 'tags') prompt = `Generate 20 highly relevant ${platform} tags/hashtags for: "${topic}"\nReturn as a JSON array of exactly 20 strings without # symbol. ONLY return the JSON array.`;
+  else if (type === 'caption') prompt = `Write 3 different ${lang} social media captions for a post about: "${topic}"\nTone: Mix of casual, funny/witty, and inspiring. Include emojis and relevant hashtags. Number them 1-3. Make each caption unique in style.`;
+  else if (type === 'hook') prompt = `Write 5 powerful hook lines for a ${platform} video about: "${topic}"\nMake them attention-grabbing in first 3 seconds. Different styles: shocking fact, question, bold statement, story opener, controversy. Number them 1-5.`;
+  else if (type === 'cta') {
+    const goal = getSelectedChip('output-cta') || 'Subscribe';
+    prompt = `Write 5 creative and persuasive Call-to-Action phrases for ${platform} to get users to ${goal}.\nLanguage: ${lang}\nMake them feel natural, urgent, and specific. Number them 1-5.`;
+  }
+
+  try {
+    const result = await callAI(prompt, type);
+    if (type === 'tags') {
+      try {
+        const clean = result.replace(/```json|```/g, '').trim();
+        const tags = JSON.parse(clean);
+        el.innerHTML = tags.map(t => `<span class="hash-tag" onclick="copyTag(this)">#${t}</span>`).join('');
+        return;
+      } catch (e) {}
+    }
+    el.innerHTML = `<button class="copy-btn" onclick="copyText('${cfg.el}')">📋 Copy</button>${result}`;
+  } catch (e) {
+    el.textContent = '❌ Error: ' + e.message;
+  }
+}
+
+// ==================== SCRIPT WRITER ====================
+function selectScriptType(el, type) {
+  document.querySelectorAll('.script-type').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedScriptType = type;
+  document.getElementById('script-output-title').textContent = `${type} Script`;
+}
+
+async function generateScript() {
+  const topic = document.getElementById('script-topic').value;
+  const points = document.getElementById('script-points').value;
+  const lang = document.getElementById('script-lang').value;
+  const el = document.getElementById('output-script');
+  if (!topic) { el.textContent = '⚠️ Please enter a topic.'; return; }
+
+  const tone = getSelectedChip('output-script') || 'Engaging';
+  const duration = document.querySelector('#page-script .chip.selected:last-of-type')?.textContent || '60 sec';
+
+  el.innerHTML = '<div class="spinner"></div><span class="loading-text">Writing script...</span>';
+
+  const prompt = `Write a complete ${selectedScriptType} script for: "${topic}"
+Language: ${lang}
+Duration: ${duration}
+Tone: ${tone}
+Key Points: ${points || 'Auto-generate relevant points'}
+
+Structure the script with clear labeled sections like:
+[HOOK] - Opening 3-5 seconds to grab attention
+[INTRO] - Brief intro
+[MAIN CONTENT] - Main body with clear flow
+[TRANSITION] (if needed)
+[CTA] - Call to action ending
+
+Make it conversational, natural, and optimized for ${selectedScriptType} format.
+Include stage directions in [brackets] for key moments.`;
+
+  try {
+    const result = await callAI(prompt, 'script');
+    el.innerHTML = `<button class="copy-btn" onclick="copyText('output-script')">📋 Copy</button>${result}`;
+  } catch (e) {
+    el.textContent = '❌ Error: ' + e.message;
+  }
+}
+
+// ==================== MEDIA SEARCH ====================
+async function searchMedia(type) {
+  const query = document.getElementById(type === 'photos' ? 'photo-search' : 'video-search').value.trim();
+  if (!query) return;
+  lastPhotoQuery = query;
+  currentMediaPage = 1;
+  if (type === 'photos') await fetchPhotos(query, 1);
+  else await fetchVideos(query, 1);
+}
+
+async function quickSearch(q) {
+  document.getElementById('photo-search').value = q;
+  await searchMedia('photos');
+}
+
+async function fetchPhotos(query, page) {
+  const grid = document.getElementById('photos-grid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px"><div class="spinner"></div> Searching...</div>';
+
+  const pexelsKey = localStorage.getItem('pexels_key') || DEFAULTS.pexelsKey;
+  const pixabayKey = localStorage.getItem('pixabay_key') || DEFAULTS.pixabayKey;
+  let photos = [];
+
+  const usePexels = !document.getElementById('pixabay-chip')?.classList.contains('selected') || document.getElementById('pexels-chip')?.classList.contains('selected');
+  const usePixabay = document.getElementById('pixabay-chip')?.classList.contains('selected');
+
+  try {
+    if (usePexels) {
+      const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=9&page=${page}`, {
+        headers: { 'Authorization': pexelsKey }
+      });
+      const data = await res.json();
+      if (data.photos) photos = [...photos, ...data.photos.map(p => ({ src: p.src.medium, full: p.src.original, thumb: p.src.small, link: p.url, source: 'pexels', alt: p.photographer }))];
+    }
+    if (usePixabay) {
+      const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(query)}&image_type=photo&per_page=9&page=${page}`);
+      const data = await res.json();
+      if (data.hits) photos = [...photos, ...data.hits.map(p => ({ src: p.webformatURL, full: p.largeImageURL, thumb: p.previewURL, link: p.pageURL, source: 'pixabay', alt: p.user }))];
+    }
+
+    if (photos.length === 0) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text2)">No photos found. Try different keywords.</div>'; return; }
+
+    grid.innerHTML = photos.map(p => `
+      <div class="media-thumb" onclick="openMediaModal('${p.full}','image','${p.link}')">
+        <img src="${p.src}" alt="${p.alt}" loading="lazy" />
+        <div class="overlay">🔍</div>
+        <div style="position:absolute;bottom:6px;left:6px"><span class="media-source source-${p.source}">${p.source}</span></div>
+      </div>
+    `).join('');
+    document.getElementById('photos-load-more').style.display = 'block';
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--accent2)">❌ ${e.message}</div>`;
+  }
+}
+
+async function loadMorePhotos() {
+  currentMediaPage++;
+  await fetchPhotos(lastPhotoQuery, currentMediaPage);
+}
+
+async function fetchVideos(query, page) {
+  const grid = document.getElementById('videos-grid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px"><div class="spinner"></div> Searching...</div>';
+
+  const pexelsKey = localStorage.getItem('pexels_key') || DEFAULTS.pexelsKey;
+  const pixabayKey = localStorage.getItem('pixabay_key') || DEFAULTS.pixabayKey;
+  let videos = [];
+
+  try {
+    const usePexels = document.getElementById('pexels-vid-chip')?.classList.contains('selected');
+    const usePixabay = document.getElementById('pixabay-vid-chip')?.classList.contains('selected');
+
+    if (usePexels) {
+      const res = await fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&per_page=6&page=${page}`, {
+        headers: { 'Authorization': pexelsKey }
+      });
+      const data = await res.json();
+      if (data.videos) videos = [...videos, ...data.videos.map(v => ({ thumb: v.image, video: v.video_files[0]?.link, link: v.url, source: 'pexels' }))];
+    }
+    if (usePixabay) {
+      const res = await fetch(`https://pixabay.com/api/videos/?key=${pixabayKey}&q=${encodeURIComponent(query)}&per_page=6&page=${page}`);
+      const data = await res.json();
+      if (data.hits) videos = [...videos, ...data.hits.map(v => ({ thumb: `https://i.vimeocdn.com/video/${v.id}_295x166.jpg`, video: v.videos?.medium?.url, link: v.pageURL, source: 'pixabay' }))];
+    }
+
+    if (!usePexels && !usePixabay) {
+      const res = await fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&per_page=6`, { headers: { 'Authorization': pexelsKey } });
+      const data = await res.json();
+      if (data.videos) videos = data.videos.map(v => ({ thumb: v.image, video: v.video_files[0]?.link, link: v.url, source: 'pexels' }));
+    }
+
+    if (videos.length === 0) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text2)">No videos found.</div>'; return; }
+
+    grid.innerHTML = videos.map(v => `
+      <div class="media-thumb" onclick="openMediaModal('${v.video}','video','${v.link}','${v.thumb}')">
+        <img src="${v.thumb}" alt="video" loading="lazy" style="width:100%;height:100%;object-fit:cover" />
+        <div class="overlay">▶️</div>
+        <div style="position:absolute;bottom:6px;left:6px"><span class="media-source source-${v.source}">${v.source}</span></div>
+      </div>
+    `).join('');
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--accent2)">❌ ${e.message}</div>`;
+  }
+}
+
+function openMediaModal(src, type, link, thumb) {
+  const modal = document.getElementById('media-modal');
+  modal.style.display = 'flex';
+  const img = document.getElementById('modal-img');
+  const video = document.getElementById('modal-video');
+  document.getElementById('modal-download').href = src || link;
+  document.getElementById('modal-source').href = link;
+  if (type === 'image') {
+    img.src = src; img.style.display = 'block'; video.style.display = 'none';
+  } else {
+    video.src = src || ''; video.style.display = 'block'; img.style.display = 'none';
+  }
+}
+
+function closeModal() {
+  document.getElementById('media-modal').style.display = 'none';
+  document.getElementById('modal-video').src = '';
+}
+
+// ==================== 7-DAY CONTENT PLANNER ====================
+let plannerData = {}; // { "0": [{...}, {...}], "1": [...], ... }
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const PLATFORM_ICONS = { YouTube:'📺', Instagram:'📸', TikTok:'🎵', Facebook:'👥', 'Twitter/X':'🐦', LinkedIn:'💼' };
+const STATUS_COLORS = { scheduled:'var(--accent)', posted:'var(--green)', draft:'var(--text2)' };
+
+function loadPlanner() {
+  const saved = localStorage.getItem('planner_data');
+  if (saved) plannerData = JSON.parse(saved);
+  setTodayDate();
+  renderPlanner();
+}
+
+function savePlannerToStorage() {
+  localStorage.setItem('planner_data', JSON.stringify(plannerData));
+}
+
+function setTodayDate() {
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  document.getElementById('planner-start-date').value = monday.toISOString().split('T')[0];
+  renderPlanner();
+}
+
+function renderPlanner() {
+  const startDateVal = document.getElementById('planner-start-date')?.value;
+  const startDate = startDateVal ? new Date(startDateVal) : new Date();
+  const container = document.getElementById('planner-days');
+  if (!container) return;
+
+  container.innerHTML = DAYS.map((day, i) => {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+    const dateStr = date.toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+    const entries = plannerData[i] || [];
+    const isToday = date.toDateString() === new Date().toDateString();
+
+    return `<div class="card" style="border:${isToday ? '2px solid var(--accent)' : '1px solid var(--border)'}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:15px">${day}</div>
+          <div style="font-size:12px;color:var(--text2);background:var(--surface2);padding:2px 8px;border-radius:6px">${dateStr}</div>
+          ${isToday ? '<div style="font-size:11px;font-weight:700;color:var(--accent);background:rgba(124,92,252,.15);padding:2px 8px;border-radius:6px">TODAY</div>' : ''}
+        </div>
+        <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="quickAddDay(${i})">+ Add</button>
+      </div>
+      ${entries.length === 0
+        ? `<div style="color:var(--text2);font-size:13px;text-align:center;padding:12px 0;border:1px dashed var(--border);border-radius:8px">No content planned — click + Add</div>`
+        : entries.map((e, ei) => `
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;position:relative">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span style="font-size:16px">${PLATFORM_ICONS[e.platform]||'📱'}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--text2)">${e.platform}</span>
+              <span style="font-size:11px;color:var(--text2)">${e.time}</span>
+              <span style="font-size:11px;color:var(--text2)">${e.contentType}</span>
+              <select onchange="updateStatus(${i},${ei},this.value)" style="margin-left:auto;font-size:11px;padding:2px 6px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);width:auto">
+                <option value="draft" ${e.status==='draft'?'selected':''}>📝 Draft</option>
+                <option value="scheduled" ${e.status==='scheduled'?'selected':''}>⏰ Scheduled</option>
+                <option value="posted" ${e.status==='posted'?'selected':''}>✅ Posted</option>
+              </select>
+              <button onclick="deleteEntry(${i},${ei})" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:14px;padding:0 4px">✕</button>
+            </div>
+            ${e.title ? `<div style="font-weight:700;font-size:13px;margin-bottom:4px">${e.title}</div>` : ''}
+            ${e.caption ? `<div style="font-size:12px;color:var(--text2);margin-bottom:4px;white-space:pre-wrap">${e.caption.substring(0,120)}${e.caption.length>120?'...':''}</div>` : ''}
+            ${e.tags ? `<div style="font-size:11px;color:var(--accent)">${e.tags.substring(0,80)}</div>` : ''}
+            <div style="display:flex;gap:6px;margin-top:8px">
+              <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="copyEntryText(${i},${ei})">📋 Copy All</button>
+              <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="editEntry(${i},${ei})">✏️ Edit</button>
+              <a href="${getSocialLink(e.platform)}" target="_blank" class="btn btn-primary" style="font-size:11px;padding:4px 10px;text-decoration:none">🚀 Post Now</a>
+            </div>
+          </div>
+        `).join('')}
+    </div>`;
+  }).join('');
+}
+
+function getSocialLink(platform) {
+  const links = {
+    YouTube: 'https://studio.youtube.com',
+    Instagram: 'https://www.instagram.com',
+    TikTok: 'https://www.tiktok.com/upload',
+    Facebook: 'https://www.facebook.com',
+    'Twitter/X': 'https://twitter.com/compose/tweet',
+    LinkedIn: 'https://www.linkedin.com/feed'
+  };
+  return links[platform] || '#';
+}
+
+function savePlannerEntry() {
+  const dayIndex = parseInt(document.getElementById('planner-day-select').value);
+  const entry = {
+    platform: document.getElementById('planner-entry-platform').value,
+    time: document.getElementById('planner-time').value,
+    contentType: document.getElementById('planner-content-type').value,
+    title: document.getElementById('planner-title').value,
+    caption: document.getElementById('planner-caption').value,
+    desc: document.getElementById('planner-desc').value,
+    tags: document.getElementById('planner-tags').value,
+    status: 'draft',
+    createdAt: Date.now()
+  };
+  if (!entry.title && !entry.caption) { alert('Title ya caption zaroor likho!'); return; }
+  if (!plannerData[dayIndex]) plannerData[dayIndex] = [];
+  plannerData[dayIndex].push(entry);
+  savePlannerToStorage();
+  renderPlanner();
+  // Clear form
+  ['planner-title','planner-caption','planner-desc','planner-tags'].forEach(id => document.getElementById(id).value = '');
+  const msg = document.getElementById('planner-save-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+
+function quickAddDay(dayIndex) {
+  document.getElementById('planner-day-select').value = dayIndex;
+  document.getElementById('planner-add-panel').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('planner-title').focus();
+}
+
+function deleteEntry(dayIndex, entryIndex) {
+  plannerData[dayIndex].splice(entryIndex, 1);
+  savePlannerToStorage();
+  renderPlanner();
+}
+
+function updateStatus(dayIndex, entryIndex, status) {
+  plannerData[dayIndex][entryIndex].status = status;
+  savePlannerToStorage();
+  renderPlanner();
+}
+
+function editEntry(dayIndex, entryIndex) {
+  const e = plannerData[dayIndex][entryIndex];
+  document.getElementById('planner-day-select').value = dayIndex;
+  document.getElementById('planner-entry-platform').value = e.platform;
+  document.getElementById('planner-time').value = e.time;
+  document.getElementById('planner-title').value = e.title || '';
+  document.getElementById('planner-caption').value = e.caption || '';
+  document.getElementById('planner-desc').value = e.desc || '';
+  document.getElementById('planner-tags').value = e.tags || '';
+  deleteEntry(dayIndex, entryIndex);
+  document.getElementById('planner-add-panel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyEntryText(dayIndex, entryIndex) {
+  const e = plannerData[dayIndex][entryIndex];
+  const text = [
+    e.title ? `TITLE:\n${e.title}` : '',
+    e.caption ? `\nCAPTION:\n${e.caption}` : '',
+    e.desc ? `\nDESCRIPTION:\n${e.desc}` : '',
+    e.tags ? `\nTAGS:\n${e.tags}` : ''
+  ].filter(Boolean).join('\n');
+  navigator.clipboard.writeText(text);
+  alert('✅ Copied to clipboard!');
+}
+
+function pasteFromGenerator() {
+  // Pull latest generated content from generator page
+  const title = document.getElementById('output-title')?.innerText?.replace('📋 Copy','').trim();
+  const caption = document.getElementById('output-caption')?.innerText?.replace('📋 Copy','').trim();
+  const desc = document.getElementById('output-desc')?.innerText?.replace('📋 Copy','').trim();
+  const tags = [...(document.querySelectorAll('.hash-tag') || [])].map(t => t.textContent).join(' ');
+  if (title && title !== 'Titles will appear here...') document.getElementById('planner-title').value = title.split('\n')[0].replace(/^1\.\s*/,'');
+  if (caption && caption !== 'Caption will appear here...') document.getElementById('planner-caption').value = caption;
+  if (desc && desc !== 'Description will appear here...') document.getElementById('planner-desc').value = desc;
+  if (tags) document.getElementById('planner-tags').value = tags;
+  if (!title && !caption && !desc) alert('Pehle Generate Content page pe content generate karo, phir yahan paste karo!');
+}
+
+function clearPlanner() {
+  if (confirm('Saara planner clear karein?')) {
+    plannerData = {};
+    savePlannerToStorage();
+    renderPlanner();
+  }
+}
+
+function exportPlanner() {
+  let text = '📅 7-DAY CONTENT PLAN\n' + '='.repeat(40) + '\n\n';
+  const startDateVal = document.getElementById('planner-start-date')?.value;
+  const startDate = startDateVal ? new Date(startDateVal) : new Date();
+
+  DAYS.forEach((day, i) => {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+    const dateStr = date.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+    text += `📆 ${day.toUpperCase()} — ${dateStr}\n${'-'.repeat(30)}\n`;
+    const entries = plannerData[i] || [];
+    if (entries.length === 0) { text += 'No content planned\n\n'; return; }
+    entries.forEach((e, idx) => {
+      text += `[${idx+1}] ${e.platform} | ${e.time} | ${e.contentType} | Status: ${e.status?.toUpperCase()}\n`;
+      if (e.title) text += `TITLE: ${e.title}\n`;
+      if (e.caption) text += `CAPTION: ${e.caption}\n`;
+      if (e.desc) text += `DESC: ${e.desc}\n`;
+      if (e.tags) text += `TAGS: ${e.tags}\n`;
+      text += '\n';
+    });
+    text += '\n';
+  });
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'content-plan.txt';
+  a.click();
+}
+
+// ==================== SCHEDULE DATA ====================
+const scheduleData = {
+  youtube: {
+    days: [
+      { day: 'Sun', score: '🔥', rating: 5, best: true },
+      { day: 'Mon', score: '⭐', rating: 2, best: false },
+      { day: 'Tue', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Wed', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Thu', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Fri', score: '🔥', rating: 5, best: true },
+      { day: 'Sat', score: '🔥', rating: 5, best: true }
+    ],
+    times: 'Best times: <strong>2 PM – 4 PM</strong> and <strong>8 PM – 10 PM</strong> (audience timezone)<br>Thu–Sat evenings see highest engagement.',
+    tip: '📺 YouTube viewers peak on weekends. Upload Friday evening so the algorithm picks up steam by Saturday. Consistency (same day/time weekly) is key for subscriber habits.'
+  },
+  instagram: {
+    days: [
+      { day: 'Sun', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Mon', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Tue', score: '🔥', rating: 5, best: true },
+      { day: 'Wed', score: '🔥', rating: 5, best: true },
+      { day: 'Thu', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Fri', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Sat', score: '⭐', rating: 2, best: false }
+    ],
+    times: 'Best times: <strong>11 AM – 1 PM</strong> and <strong>7 PM – 9 PM</strong><br>Tuesday and Wednesday consistently outperform.',
+    tip: '📸 Instagram engagement is highest on weekdays during lunch and evenings. Avoid Sunday (low engagement). Use Stories daily but Reels 3–5x/week.'
+  },
+  tiktok: {
+    days: [
+      { day: 'Sun', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Mon', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Tue', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Wed', score: '🔥', rating: 5, best: true },
+      { day: 'Thu', score: '🔥', rating: 5, best: true },
+      { day: 'Fri', score: '🔥', rating: 5, best: true },
+      { day: 'Sat', score: '⭐⭐⭐', rating: 4, best: false }
+    ],
+    times: 'Best times: <strong>7 AM – 9 AM</strong>, <strong>12 PM – 3 PM</strong>, <strong>7 PM – 11 PM</strong><br>Late evening (9–11 PM) is TikTok\'s golden hour.',
+    tip: '🎵 TikTok\'s For You Page is 24/7 but Wed-Fri evenings show highest reach. Post when your target audience is in bed (8–11 PM) for morning discovery.'
+  },
+  facebook: {
+    days: [
+      { day: 'Sun', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Mon', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Tue', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Wed', score: '🔥', rating: 5, best: true },
+      { day: 'Thu', score: '🔥', rating: 5, best: true },
+      { day: 'Fri', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Sat', score: '⭐⭐⭐', rating: 4, best: false }
+    ],
+    times: 'Best times: <strong>9 AM – 1 PM</strong><br>Wednesday 11 AM – 1 PM is the single best slot.',
+    tip: '👥 Facebook users are most active mid-week mornings. Videos get 6x more reach than photos. Facebook Groups have higher organic reach than pages.'
+  },
+  twitter: {
+    days: [
+      { day: 'Sun', score: '⭐', rating: 2, best: false },
+      { day: 'Mon', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Tue', score: '🔥', rating: 5, best: true },
+      { day: 'Wed', score: '🔥', rating: 5, best: true },
+      { day: 'Thu', score: '🔥', rating: 5, best: true },
+      { day: 'Fri', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Sat', score: '⭐', rating: 2, best: false }
+    ],
+    times: 'Best times: <strong>8 AM – 10 AM</strong> and <strong>6 PM – 9 PM</strong><br>Tweet during commute hours for max visibility.',
+    tip: '🐦 Twitter/X engagement peaks weekday mornings. Threads perform 3x better than single tweets. Trending topics get massive reach—use them strategically.'
+  },
+  snapchat: {
+    days: [
+      { day: 'Sun', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Mon', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Tue', score: '⭐', rating: 2, best: false },
+      { day: 'Wed', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Thu', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Fri', score: '🔥', rating: 5, best: true },
+      { day: 'Sat', score: '🔥', rating: 5, best: true }
+    ],
+    times: 'Best times: <strong>10 PM – 1 AM</strong> (late night)<br>Friday and Saturday nights are Snapchat\'s peak.',
+    tip: '👻 Snapchat skews younger audiences (Gen Z). Late night posts (10 PM+) get highest views. Consistency with daily Stories builds streaks and loyal viewers.'
+  },
+  linkedin: {
+    days: [
+      { day: 'Sun', score: '⭐', rating: 1, best: false },
+      { day: 'Mon', score: '⭐⭐⭐', rating: 4, best: false },
+      { day: 'Tue', score: '🔥', rating: 5, best: true },
+      { day: 'Wed', score: '🔥', rating: 5, best: true },
+      { day: 'Thu', score: '🔥', rating: 5, best: true },
+      { day: 'Fri', score: '⭐⭐', rating: 3, best: false },
+      { day: 'Sat', score: '⭐', rating: 1, best: false }
+    ],
+    times: 'Best times: <strong>8 AM – 10 AM</strong> and <strong>12 PM</strong><br>Business hours only. Avoid weekends entirely.',
+    tip: '💼 LinkedIn is a professional network—post during work hours. Long-form posts (700+ words) get 3x reach. Tuesday-Thursday 8–10 AM is the sweet spot.'
+  }
+};
+
+function showSchedule(chip, platform) {
+  document.querySelectorAll('#schedule-platforms .chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  const data = scheduleData[platform];
+  const daysEl = document.getElementById('schedule-days');
+  daysEl.innerHTML = data.days.map(d => `
+    <div class="day-card ${d.best ? 'best' : ''}">
+      <div class="day-name">${d.day}</div>
+      <div class="day-score">${d.score}</div>
+      ${d.best ? '<div style="font-size:9px;color:var(--green);font-weight:700">BEST</div>' : ''}
+    </div>
+  `).join('');
+  document.getElementById('schedule-times').innerHTML = data.times;
+  document.getElementById('schedule-tip').innerHTML = data.tip;
+}
+
+function renderAllPlatforms() {
+  const el = document.getElementById('all-platforms-schedule');
+  const platforms = [
+    { key: 'youtube', name: '📺 YouTube', best: 'Fri, Sat, Sun · 2–4 PM & 8–10 PM' },
+    { key: 'instagram', name: '📸 Instagram', best: 'Tue, Wed · 11 AM–1 PM & 7–9 PM' },
+    { key: 'tiktok', name: '🎵 TikTok', best: 'Wed–Fri · 7–9 PM & 9–11 PM' },
+    { key: 'facebook', name: '👥 Facebook', best: 'Wed, Thu · 9 AM–1 PM' },
+    { key: 'twitter', name: '🐦 Twitter/X', best: 'Tue–Thu · 8–10 AM & 6–9 PM' },
+    { key: 'snapchat', name: '👻 Snapchat', best: 'Fri, Sat · 10 PM–1 AM' },
+    { key: 'linkedin', name: '💼 LinkedIn', best: 'Tue–Thu · 8–10 AM & 12 PM' },
+  ];
+  el.innerHTML = platforms.map(p => `
+    <div class="platform-pill" onclick="showPage('schedule')">
+      <span class="platform-icon">${p.name.split(' ')[0]}</span>
+      <span class="pname">${p.name.split(' ').slice(1).join(' ')}</span>
+      <span class="pbest">⏰ ${p.best}</span>
+    </div>
+  `).join('');
+}
+
+// ==================== UI HELPERS ====================
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const items = document.querySelectorAll('.nav-item');
+  items.forEach(item => { if (item.textContent.toLowerCase().includes(getPageLabel(page))) item.classList.add('active'); });
+  currentPage = page;
+  if (page === 'schedule') { showSchedule(document.querySelector('#schedule-platforms .chip'), 'youtube'); renderAllPlatforms(); }
+  if (page === 'planner') { renderPlanner(); }
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+function getPageLabel(p) {
+  const labels = { topics:'topic', generate:'generate', script:'script', chat:'chat', media:'media', editing:'editing', videotools:'video', planner:'planner', schedule:'schedule', settings:'settings' };
+  return labels[p] || p;
+}
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+function switchTab(group, tab) {
+  document.querySelectorAll(`#${group}-tabs .tab`).forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  if (group === 'gen') {
+    document.querySelectorAll('.gentab').forEach(t => t.style.display = 'none');
+    document.getElementById(`gentab-${tab}`).style.display = 'block';
+  } else if (group === 'media') {
+    document.getElementById('mediatab-photos').style.display = tab === 'photos' ? 'block' : 'none';
+    document.getElementById('mediatab-videos').style.display = tab === 'videos' ? 'block' : 'none';
+  }
+}
+
+function toggleChip(el) { el.classList.toggle('selected'); }
+
+function getSelectedChip(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return '';
+  const selected = container.querySelector('.chip.selected');
+  return selected ? selected.textContent : '';
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy', 2000); }
+  });
+}
+
+function copyTag(el) {
+  navigator.clipboard.writeText(el.textContent);
+  const orig = el.style.background;
+  el.style.background = 'rgba(74,222,128,.3)';
+  setTimeout(() => el.style.background = orig, 600);
+}
+
+// ==================== INIT ====================
+window.onload = () => {
+  initApp();
+  loadSettings();
+  loadPlanner();
+  showSchedule(document.querySelector('#schedule-platforms .chip'), 'youtube');
+};
+</script>
+</body>
+</html>
