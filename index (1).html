@@ -206,7 +206,7 @@
       <div class="nav-section">Planning</div>
       <div class="nav-item" onclick="showPage('planner')"><span class="icon">🗓️</span> 7-Day Planner</div>
       <div class="nav-item" onclick="showPage('schedule')"><span class="icon">📅</span> Post Schedule</div>
-      
+      <div class="nav-item" onclick="showPage('settings')"><span class="icon">⚙️</span> Settings</div>
     </nav>
   </aside>
 
@@ -272,7 +272,7 @@
               <option value="Urdu">Urdu</option>
             </select>
           </div>
-          <button class="btn btn-primary" style="width:100%" onclick="fetchTopics(false)">✨ Get 10 Topics</button>
+          <button class="btn btn-primary" style="width:100%" onclick="fetchTopics(false)">✨ Get 5 Topics</button>
         </div>
 
         <div class="card">
@@ -282,7 +282,7 @@
           </div>
           <div id="topics-nav" style="display:none;margin-top:14px;display:flex;gap:10px;">
             <button class="btn btn-ghost" style="flex:1" onclick="fetchTopics(false)">🔄 Refresh</button>
-            <button class="btn btn-primary" style="flex:1" onclick="fetchTopics(true)">➡️ Next 10</button>
+            <button class="btn btn-primary" style="flex:1" onclick="fetchTopics(true)">➡️ Next 5</button>
           </div>
         </div>
       </div>
@@ -402,8 +402,7 @@
         <div class="page-title">✨ Generate Content</div>
       </div>
       <div class="tabs" id="gen-tabs">
-        <div class="tab active" onclick="switchTab('gen','all')">🎯 Generate All</div>
-        <div class="tab" onclick="switchTab('gen','title')">Title</div>
+        <div class="tab active" onclick="switchTab('gen','title')">Title</div>
         <div class="tab" onclick="switchTab('gen','desc')">Description</div>
         <div class="tab" onclick="switchTab('gen','tags')">Tags & Hashtags</div>
         <div class="tab" onclick="switchTab('gen','caption')">Caption</div>
@@ -411,53 +410,8 @@
         <div class="tab" onclick="switchTab('gen','cta')">CTA</div>
       </div>
 
-      <!-- GENERATE ALL -->
-      <div id="gentab-all" class="gentab">
-        <div class="card" style="margin-bottom:18px">
-          <div class="card-title">🎯 Generate Everything at Once</div>
-          <div class="grid2" style="gap:12px;margin-bottom:14px">
-            <div class="field"><label>Topic / Keywords *</label><input id="all-topic" placeholder="e.g. How to earn money online" /></div>
-            <div class="field"><label>Platform</label>
-              <select id="all-platform"><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Facebook</option><option>Twitter/X</option><option>LinkedIn</option></select>
-            </div>
-            <div class="field"><label>Language</label>
-              <select id="all-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select>
-            </div>
-          </div>
-          <div style="margin-bottom:14px">
-            <label style="margin-bottom:8px;display:block;font-size:13px;color:var(--text2)">Select what to generate:</label>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="all-titles" checked> 10 Titles</label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="all-captions" checked> 10 Captions</label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="all-tags" checked> 25 Hashtags</label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="all-topics" checked> 10 Topics</label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="all-desc"> Description</label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;background:var(--surface2);padding:8px 14px;border-radius:10px;border:1px solid var(--border)"><input type="checkbox" id="all-hooks"> 5 Hooks</label>
-            </div>
-          </div>
-          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:15px" onclick="generateAll()">🚀 Generate Selected</button>
-        </div>
-        <div id="all-progress" style="display:none;margin-bottom:18px">
-          <div style="background:var(--surface2);border-radius:10px;padding:14px">
-            <div id="all-progress-text" style="font-size:13px;color:var(--text2);margin-bottom:8px">Generating...</div>
-            <div style="background:var(--border);border-radius:5px;height:6px"><div id="all-progress-bar" style="background:linear-gradient(135deg,var(--accent),var(--accent2));height:6px;border-radius:5px;width:0%;transition:width 0.4s"></div></div>
-          </div>
-        </div>
-        <div id="all-results" style="display:none">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-            <button class="btn btn-ghost" onclick="copyAllResults()">📋 Copy All</button>
-          </div>
-          <div id="all-titles-out" style="display:none;margin-bottom:16px"><div class="card"><div class="card-title">📌 10 Titles</div><div id="all-titles-content" class="output-box"></div><button class="btn btn-ghost" style="margin-top:8px;font-size:12px;width:100%" onclick="copyElBtn('all-titles-content',this)">📋 Copy Titles</button></div></div>
-          <div id="all-captions-out" style="display:none;margin-bottom:16px"><div class="card"><div class="card-title">✍️ 10 Captions</div><div id="all-captions-content" class="output-box"></div><button class="btn btn-ghost" style="margin-top:8px;font-size:12px;width:100%" onclick="copyElBtn('all-captions-content',this)">📋 Copy Captions</button></div></div>
-          <div id="all-tags-out" style="display:none;margin-bottom:16px"><div class="card"><div class="card-title">🏷️ 25 Hashtags</div><div id="all-tags-content" class="output-box"></div><button class="btn btn-ghost" style="margin-top:8px;font-size:12px;width:100%" onclick="copyElBtn('all-tags-content',this)">📋 Copy Hashtags</button></div></div>
-          <div id="all-topics-out" style="display:none;margin-bottom:16px"><div class="card"><div class="card-title">💡 10 Topics</div><div id="all-topics-content" class="output-box"></div><button class="btn btn-ghost" style="margin-top:8px;font-size:12px;width:100%" onclick="copyElBtn('all-topics-content',this)">📋 Copy Topics</button></div></div>
-          <div id="all-desc-out" style="display:none;margin-bottom:16px"><div class="card"><div class="card-title">📄 Description</div><div id="all-desc-content" class="output-box"></div><button class="btn btn-ghost" style="margin-top:8px;font-size:12px;width:100%" onclick="copyElBtn('all-desc-content',this)">📋 Copy Description</button></div></div>
-          <div id="all-hooks-out" style="display:none;margin-bottom:16px"><div class="card"><div class="card-title">🪝 5 Hooks</div><div id="all-hooks-content" class="output-box"></div><button class="btn btn-ghost" style="margin-top:8px;font-size:12px;width:100%" onclick="copyElBtn('all-hooks-content',this)">📋 Copy Hooks</button></div></div>
-        </div>
-      </div>
-
       <!-- TITLE -->
-      <div id="gentab-title" class="gentab" style="display:none">
+      <div id="gentab-title" class="gentab">
         <div class="grid2">
           <div class="card">
             <div class="card-title">Title Generator</div>
@@ -479,21 +433,12 @@
             <div class="field"><label>Language</label>
               <select id="title-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select>
             </div>
-            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-              <button class="btn btn-primary" style="flex:1" onclick="generateContent('title')">🚀 Generate 10 Titles</button>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-              <span style="font-size:12px;color:var(--text2);align-self:center">Pick count:</span>
-              <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="generateContentCount('title',1)">1</button>
-              <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="generateContentCount('title',3)">3</button>
-              <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="generateContentCount('title',5)">5</button>
-              <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="generateContentCount('title',10)">10</button>
-            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="generateContent('title')">🚀 Generate Titles</button>
           </div>
           <div class="card">
             <div class="card-title">Generated Titles</div>
             <div id="output-title" class="output-box" style="min-height:200px">Titles will appear here...</div>
-            <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-ghost" style="flex:1" onclick="generateContent('title')">🔄 Regenerate</button><button class="btn btn-ghost" style="flex:1" onclick="copyElBtn('output-title',this)">📋 Copy</button></div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('title')">🔄 Regenerate</button>
           </div>
         </div>
       </div>
@@ -518,7 +463,7 @@
           <div class="card">
             <div class="card-title">Generated Description</div>
             <div id="output-desc" class="output-box" style="min-height:200px">Description will appear here...</div>
-            <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-ghost" style="flex:1" onclick="generateContent('desc')">🔄 Regenerate</button><button class="btn btn-ghost" style="flex:1" onclick="copyElBtn('output-desc',this)">📋 Copy</button></div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('desc')">🔄 Regenerate</button>
           </div>
         </div>
       </div>
@@ -578,7 +523,7 @@
           <div class="card">
             <div class="card-title">Generated Caption</div>
             <div id="output-caption" class="output-box" style="min-height:200px">Caption will appear here...</div>
-            <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-ghost" style="flex:1" onclick="generateContent('caption')">🔄 Regenerate</button><button class="btn btn-ghost" style="flex:1" onclick="copyElBtn('output-caption',this)">📋 Copy</button></div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="generateContent('caption')">🔄 Regenerate</button>
           </div>
         </div>
       </div>
@@ -720,7 +665,6 @@
       <div class="tabs" id="media-tabs">
         <div class="tab active" onclick="switchTab('media','photos')">📷 Photos</div>
         <div class="tab" onclick="switchTab('media','videos')">🎥 Videos</div>
-        <div class="tab" onclick="openChromeSearch()">🌐 Chrome Search</div>
       </div>
 
       <div id="mediatab-photos">
@@ -886,7 +830,14 @@
           <div class="app-sub" style="color:var(--green);margin-top:4px">Free credits daily</div>
           <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
         </div>
-        
+        <div class="editing-app" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:18px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openTool('https://leonardo.ai')">
+          <div class="app-icon">🦁</div>
+          <div class="app-name">Leonardo AI</div>
+          <div class="app-sub">High quality images</div>
+          <div class="app-sub" style="color:var(--green);margin-top:4px">150 free credits/day</div>
+          <button class="btn btn-primary" style="margin-top:10px;width:100%;font-size:12px;padding:7px">🚀 Open Tool</button>
+        </div>
+      </div>
     </div>
 
     <!-- ========== EDITING APPS ========== -->
@@ -1071,6 +1022,114 @@
       </div>
     </div>
 
+    <!-- ========== SETTINGS ========== -->
+    <div id="page-settings" class="page" style="margin-top:40px">
+      <div class="topbar"><div class="page-title">⚙️ Settings & API Keys</div></div>
+
+      <!-- QUOTA STATUS -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title">📊 Daily Quota Status</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Auto-resets every midnight. AI auto-switches when quota fills.</div>
+        <div id="quota-status"></div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px;font-size:13px">
+          <span style="color:var(--text2)">Currently using:</span>
+          <span id="active-provider-badge" style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border)">Auto</span>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- AI KEYS -->
+        <div class="card">
+          <div class="card-title">🤖 AI Provider Keys</div>
+          <div class="alert alert-info" style="margin-bottom:14px;font-size:12px">
+            🔄 Auto-routing: <strong>Cerebras → Gemini → Groq → OpenRouter</strong><br>
+            Quota fills automatically switch to next provider.
+          </div>
+
+          <div class="field">
+            <label>🟠 Cerebras Key (1,700 req/day — Priority 1)</label>
+            <input id="cerebras-key" type="password" placeholder="csk-..." />
+          </div>
+          <div class="field">
+            <label>🔴 Gemini Key (1,500 req/day — Priority 2)</label>
+            <input id="gemini-key" type="password" placeholder="AIza..." />
+          </div>
+          <div class="field">
+            <label>Model (Gemini)</label>
+            <select id="gemini-model">
+              <option value="gemini-2.5-flash-lite-preview-06-17">Gemini 2.5 Flash Lite ⭐ (1,000/day)</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash (250/day)</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro (100/day)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>🟣 Groq Key (1,000 req/day — Priority 3)</label>
+            <input id="groq-key" type="password" placeholder="gsk_..." />
+          </div>
+          <div class="field">
+            <label>Model (Groq)</label>
+            <select id="groq-model">
+              <option value="llama-3.3-70b-versatile">Llama 3.3 70B ⭐ (Best)</option>
+              <option value="llama-4-scout-17b-16e-instruct">Llama 4 Scout</option>
+              <option value="llama3.1-8b-instant">Llama 3.1 8B (Fastest)</option>
+              <option value="qwen-qwq-32b">Qwen3 32B (Reasoning)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>🔵 OpenRouter Key (200 req/day — Backup)</label>
+            <input id="openrouter-key" type="password" placeholder="sk-or-v1-..." />
+          </div>
+
+          <div class="field">
+            <label>Override: Force specific provider (optional)</label>
+            <select id="ai-provider-manual">
+              <option value="">🔄 Auto (Recommended)</option>
+              <option value="cerebras">🟠 Always Cerebras</option>
+              <option value="gemini">🔴 Always Gemini</option>
+              <option value="groq">🟣 Always Groq</option>
+              <option value="openrouter">🔵 Always OpenRouter</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%" onclick="saveAllSettings()">💾 Save All Settings</button>
+          <div id="settings-msg" style="margin-top:10px;font-size:13px;color:var(--green);display:none">✅ Settings saved!</div>
+        </div>
+
+        <!-- MEDIA + PREFS -->
+        <div class="card">
+          <div class="card-title">📷 Media API Keys</div>
+          <div class="field">
+            <label>Pexels API Key (200 req/hr, 20K/month)</label>
+            <input id="pexels-key" type="password" placeholder="Enter Pexels API key" />
+          </div>
+          <div class="field">
+            <label>Pixabay API Key</label>
+            <input id="pixabay-key" type="password" placeholder="Enter Pixabay API key" />
+          </div>
+          <button class="btn btn-ghost" style="width:100%" onclick="saveMediaKeys()">💾 Save Media Keys</button>
+          <div id="media-settings-msg" style="margin-top:10px;font-size:13px;color:var(--green);display:none">✅ Media keys saved!</div>
+
+          <div class="divider"></div>
+          <div class="card-title">🎯 Content Preferences</div>
+          <div class="field"><label>Default Language</label>
+            <select id="pref-lang"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option></select>
+          </div>
+          <div class="field"><label>Your Niche</label>
+            <input id="pref-niche" placeholder="e.g. Tech, Gaming, Food..." />
+          </div>
+          <button class="btn btn-ghost" style="width:100%" onclick="savePrefs()">💾 Save Preferences</button>
+
+          <div class="divider"></div>
+          <div class="card-title">🗺️ AI Routing Logic</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.8">
+            🟠 <strong>Cerebras</strong> → Title, Tags, Hook, CTA (fast tasks)<br>
+            🔴 <strong>Gemini</strong> → Description, Topics (creative tasks)<br>
+            🟣 <strong>Groq</strong> → Script, Caption, Chat (long tasks)<br>
+            🔵 <strong>OpenRouter</strong> → Backup for all
+          </div>
+        </div>
+      </div>
+    </div>
 
   </main>
 </div>
@@ -1120,8 +1179,7 @@ const AI_ROUTING = {
   topics:  'gemini',
   script:  'groq',
   chat:    'groq',
-  pack:    'groq',
-  all:     'groq'
+  pack:    'groq'
 };
 
 // User daily request limit
@@ -1156,10 +1214,7 @@ function updateUserLimitDisplay() {
 
 // Daily quota tracker (resets midnight)
 const QUOTA = {
-  gemini:   { used: 0, max: 1500,  key: 'quota_gemini' },
-  groq:     { used: 0, max: 14400, key: 'quota_groq' },
-  cerebras: { used: 0, max: 14400, key: 'quota_cerebras' }
-},
+  cerebras: { used: 0, max: 14400, key: 'quota_cerebras' },
   gemini:   { used: 0, max: 1500, key: 'quota_gemini' },
   groq:     { used: 0, max: 14400, key: 'quota_groq' }
 };
@@ -1184,15 +1239,13 @@ function incrementQuota(provider) {
 }
 
 function getAvailableProvider(preferred) {
-  const order = [preferred, 'gemini', 'groq', 'cerebras'];
+  const order = [preferred, 'groq', 'cerebras', 'gemini'];
   const seen = new Set();
   for (const p of order) {
     if (seen.has(p)) continue;
     seen.add(p);
     if (QUOTA[p] && QUOTA[p].used < QUOTA[p].max) return p;
   }
-  return 'gemini';
-}
   return 'gemini';
 }
 
@@ -1222,9 +1275,9 @@ function initApp() {
 function loadSettings() {
   document.getElementById('cerebras-key').value = localStorage.getItem('cerebras_key') || '';
   document.getElementById('gemini-key').value = localStorage.getItem('gemini_key') || '';
-  document.getElementById('gemini-model').value = localStorage.getItem('gemini_model') || 'gemini-2.0-flash';
+  document.getElementById('gemini-model').value = localStorage.getItem('gemini_model') || 'gemini-2.5-flash-lite-preview-06-17';
   document.getElementById('groq-key').value = localStorage.getItem('groq_key') || '';
-  document.getElementById('groq-model').value = localStorage.getItem('groq_model') || 'llama-3.1-8b-instant';
+  document.getElementById('groq-model').value = localStorage.getItem('groq_model') || 'llama-3.3-70b-versatile';
   document.getElementById('openrouter-key').value = localStorage.getItem('openrouter_key') || '';
   document.getElementById('ai-provider-manual').value = localStorage.getItem('ai_provider_manual') || '';
   document.getElementById('pexels-key').value = localStorage.getItem('pexels_key') || '';
@@ -1318,7 +1371,7 @@ async function callAI(prompt, taskType, skipUserLimit) {
     showProviderBadge(provider);
     return result;
   } catch(e) {
-    const fallbacks = ['gemini', 'groq', 'cerebras'].filter(p => p !== provider);
+    const fallbacks = ['groq','cerebras','gemini'].filter(p => p !== provider);
     for (const fb of fallbacks) {
       if (QUOTA[fb] && QUOTA[fb].used < QUOTA[fb].max) {
         try {
@@ -1329,7 +1382,7 @@ async function callAI(prompt, taskType, skipUserLimit) {
         } catch(e2) { continue; }
       }
     }
-    throw new Error('All AI providers failed. Check browser console (F12) for details.');
+    throw new Error('AI error aaya! Dobara try karo.');
   }
 }
 
@@ -1348,35 +1401,41 @@ async function callProvider(provider, prompt) {
   if (provider === 'gemini') {
     const key = localStorage.getItem('gemini_key') || DEFAULTS.geminiKey;
     let res;
-    try {
-      res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      });
-    } catch(e) { throw new Error('Gemini network error: ' + e.message); }
+    try { res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    }); } catch(e) { throw new Error('Gemini network error: ' + e.message); }
     const data = await res.json();
     if (!res.ok || !data.candidates) throw new Error((data.error && data.error.message) || 'Gemini error ' + res.status);
     return data.candidates[0].content.parts[0].text;
 
-  } else if (provider === 'groq' || provider === 'cerebras') {
-    // Uses Netlify Function backend - no CORS!
+  } else if (provider === 'groq') {
+    const key = localStorage.getItem('groq_key') || DEFAULTS.groqKey;
     let res;
-    try {
-      res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider, prompt })
-      });
-    } catch(e) { throw new Error(provider + ' network error: ' + e.message); }
+    try { res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.85 })
+    }); } catch(e) { throw new Error('Groq network error: ' + e.message); }
     const data = await res.json();
-    if (!res.ok || !data.result) throw new Error(data.error || provider + ' error ' + res.status);
-    return data.result;
+    if (!res.ok || !data.choices) throw new Error((data.error && data.error.message) || 'Groq error ' + res.status);
+    return data.choices[0].message.content;
+
+  } else {
+    // cerebras
+    const key = localStorage.getItem('cerebras_key') || DEFAULTS.cerebrasKey;
+    let res;
+    try { res = await fetch('https://api.cerebras.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'llama-3.3-70b', messages: [{ role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.85 })
+    }); } catch(e) { throw new Error('Cerebras network error: ' + e.message); }
+    const data = await res.json();
+    if (!res.ok || !data.choices) throw new Error((data.error && data.error.message) || 'Cerebras error ' + res.status);
+    return data.choices[0].message.content;
   }
-  throw new Error('No provider available');
 }
-
-
 
 // ==================== CONTENT PACK ====================
 async function generatePack() {
@@ -1467,12 +1526,12 @@ Styles: shocking fact, question, bold statement, story opener, controversy. Numb
 }
 
 function copyEl(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const text = el.innerText || el.textContent;
+  const text = document.getElementById(id).textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = event.target;
-    if (btn) { const orig = btn.textContent; btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = orig, 1500); }
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
   });
 }
 
@@ -1627,153 +1686,6 @@ async function generateContent(type) {
   }
 }
 
-// ==================== CHROME SEARCH ====================
-function openChromeSearch() {
-  const query = document.getElementById('photo-search')?.value || document.getElementById('video-search')?.value || '';
-  const url = 'https://www.google.com/search?q=' + encodeURIComponent(query + ' site:unsplash.com OR site:pexels.com') + '&tbm=isch';
-  window.open(url, '_blank');
-}
-
-// ==================== COPY HELPER ====================
-function copyElBtn(id, btn) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const text = el.innerText || el.textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✅ Copied!';
-    setTimeout(() => btn.textContent = orig, 1500);
-  });
-}
-
-function copyAllResults() {
-  const sections = ['titles','captions','tags','topics','desc','hooks'];
-  let all = '';
-  sections.forEach(s => {
-    const el = document.getElementById('all-' + s + '-content');
-    const out = document.getElementById('all-' + s + '-out');
-    if (el && out && out.style.display !== 'none') {
-      all += '=== ' + s.toUpperCase() + ' ===\n' + (el.innerText || el.textContent) + '\n\n';
-    }
-  });
-  navigator.clipboard.writeText(all.trim()).then(() => {
-    const btn = event.target;
-    btn.textContent = '✅ All Copied!';
-    setTimeout(() => btn.textContent = '📋 Copy All', 1500);
-  });
-}
-
-// ==================== GENERATE ALL ====================
-async function generateAll() {
-  const topic = document.getElementById('all-topic').value.trim();
-  if (!topic) { alert('Topic likho pehle!'); return; }
-
-  const platform = document.getElementById('all-platform').value;
-  const lang = document.getElementById('all-lang').value;
-
-  const tasks = [];
-  if (document.getElementById('all-titles').checked) tasks.push('titles');
-  if (document.getElementById('all-captions').checked) tasks.push('captions');
-  if (document.getElementById('all-tags').checked) tasks.push('tags');
-  if (document.getElementById('all-topics').checked) tasks.push('topics');
-  if (document.getElementById('all-desc').checked) tasks.push('desc');
-  if (document.getElementById('all-hooks').checked) tasks.push('hooks');
-
-  if (tasks.length === 0) { alert('Kuch toh select karo!'); return; }
-
-  const used = getUserRequests();
-  if (used >= USER_LIMIT) { alert('Aapki 30 daily requests khatam ho gayi! Kal wapas aao.'); return; }
-
-  document.getElementById('all-progress').style.display = 'block';
-  document.getElementById('all-results').style.display = 'none';
-  ['titles','captions','tags','topics','desc','hooks'].forEach(t => {
-    const el = document.getElementById('all-' + t + '-out');
-    if (el) el.style.display = 'none';
-  });
-
-  let done = 0;
-  const total = tasks.length;
-
-  function setProgress(text, pct) {
-    document.getElementById('all-progress-text').textContent = text;
-    document.getElementById('all-progress-bar').style.width = pct + '%';
-  }
-
-  incrementUserRequest();
-
-  const prompts = {
-    titles: 'Generate 10 compelling ' + platform + ' video titles for: "' + topic + '"\nLanguage: ' + lang + '\nStyle: Mix curiosity, benefit, urgency. Number them 1-10. Return only numbered list.',
-    captions: 'Write 10 different ' + lang + ' social media captions for: "' + topic + '"\nMix tones: casual, funny, inspiring, emotional. Include emojis and hashtags. Number them 1-10.',
-    tags: 'Generate 25 trending ' + platform + ' hashtags for: "' + topic + '"\nReturn as space-separated hashtags with # symbol. Only hashtags.',
-    topics: 'Generate 10 unique content topic ideas related to "' + topic + '" for ' + platform + ' in ' + lang + '.\nNumbered list 1-10. Format: Title - brief description.',
-    desc: 'Write a ' + platform + ' video description for: "' + topic + '"\nLanguage: ' + lang + '\nInclude hook, key points, call to action. Under 300 words.',
-    hooks: 'Write 5 powerful hook lines for ' + platform + ' about: "' + topic + '"\nStyles: shocking fact, question, bold statement, story, controversy. Number 1-5.'
-  };
-
-  for (const task of tasks) {
-    setProgress('Generating ' + task + '... (' + (done+1) + '/' + total + ')', Math.round((done/total)*100));
-    try {
-      const result = await callAI(prompts[task], 'pack', true);
-      const el = document.getElementById('all-' + task + '-content');
-      if (el) el.textContent = result;
-      const out = document.getElementById('all-' + task + '-out');
-      if (out) out.style.display = 'block';
-      done++;
-      setProgress('✅ ' + task + ' done! (' + done + '/' + total + ')', Math.round((done/total)*100));
-    } catch(e) {
-      const el = document.getElementById('all-' + task + '-content');
-      if (el) el.textContent = '❌ Error: ' + e.message;
-      const out = document.getElementById('all-' + task + '-out');
-      if (out) out.style.display = 'block';
-      done++;
-    }
-    await new Promise(r => setTimeout(r, 400));
-  }
-
-  setProgress('✅ Done!', 100);
-  document.getElementById('all-results').style.display = 'block';
-  updateUserLimitDisplay();
-}
-
-// ==================== GENERATE CONTENT COUNT ====================
-async function generateContentCount(type, count) {
-  const configs = {
-    title: { input: 'title-topic', platform: 'title-platform', lang: 'title-lang', el: 'output-title' },
-    caption: { input: 'cap-topic', platform: null, lang: 'cap-lang', el: 'output-caption' },
-    tags: { input: 'tags-topic', platform: 'tags-platform', lang: null, el: 'output-tags' }
-  };
-  const cfg = configs[type];
-  if (!cfg) return;
-  const topic = document.getElementById(cfg.input)?.value?.trim();
-  const platform = cfg.platform ? document.getElementById(cfg.platform)?.value : 'YouTube';
-  const lang = cfg.lang ? document.getElementById(cfg.lang)?.value : 'English';
-  const el = document.getElementById(cfg.el);
-  if (!topic) { el.textContent = '⚠️ Topic likho pehle!'; return; }
-  el.innerHTML = '<div class="spinner"></div><span class="loading-text">Generating ' + count + ' ' + type + '...</span>';
-  let prompt = '';
-  if (type === 'title') prompt = `Generate exactly ${count} compelling ${platform} video titles for: "${topic}"
-Language: ${lang}
-Number them 1-${count}. Return only numbered list.`;
-  else if (type === 'caption') prompt = `Write exactly ${count} different ${lang} social media captions for: "${topic}"
-Mix tones. Include emojis and hashtags. Number them 1-${count}.`;
-  else if (type === 'tags') prompt = `Generate exactly ${count} relevant ${platform} hashtags for: "${topic}"
-Return as JSON array of ${count} strings without # symbol. ONLY JSON array.`;
-  try {
-    const result = await callAI(prompt, type);
-    if (type === 'tags') {
-      try {
-        const clean = result.replace(/\`\`\`json|\`\`\`/g, '').trim();
-        const tags = JSON.parse(clean);
-        el.innerHTML = tags.map(t => '<span class="hash-tag" onclick="copyTag(this)">#' + t + '</span>').join('');
-        return;
-      } catch(e) {}
-    }
-    el.innerHTML = '<button class="copy-btn" onclick="copyText('' + cfg.el + '')">📋 Copy</button>' + result;
-  } catch(e) {
-    el.textContent = '❌ Error: ' + e.message;
-  }
-}
-
 // ==================== SCRIPT WRITER ====================
 function selectScriptType(el, type) {
   document.querySelectorAll('.script-type').forEach(e => e.classList.remove('selected'));
@@ -1846,8 +1758,8 @@ async function fetchPhotos(query, page) {
 
   try {
     if (usePexels) {
-      const res = await fetch('https://api.pexels.com/v1/search?query=' + encodeURIComponent(query) + '&per_page=9&page=' + page, {
-        headers: { 'Authorization': pexelsKey, 'Accept': 'application/json' }
+      const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=9&page=${page}`, {
+        headers: { 'Authorization': pexelsKey }
       });
       const data = await res.json();
       if (data.photos) photos = [...photos, ...data.photos.map(p => ({ src: p.src.medium, full: p.src.original, thumb: p.src.small, link: p.url, source: 'pexels', alt: p.photographer }))];
@@ -1904,7 +1816,7 @@ async function fetchVideos(query, page) {
     }
 
     if (!usePexels && !usePixabay) {
-      const res = await fetch('https://api.pexels.com/videos/search?query=' + encodeURIComponent(query) + '&per_page=6', { headers: { 'Authorization': pexelsKey, 'Accept': 'application/json' } });
+      const res = await fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&per_page=6`, { headers: { 'Authorization': pexelsKey } });
       const data = await res.json();
       if (data.videos) videos = data.videos.map(v => ({ thumb: v.image, video: v.video_files[0]?.link, link: v.url, source: 'pexels' }));
     }
@@ -2296,18 +2208,18 @@ function showPage(page) {
 }
 
 function getPageLabel(p) {
-  const labels = { topics:'topic', pack:'pack', generate:'generate', script:'script', chat:'chat', media:'media', editing:'editing', videotools:'video', planner:'planner', schedule:'schedule', settings:'settings' };
+  const labels = { topics:'topic', generate:'generate', script:'script', chat:'chat', media:'media', editing:'editing', videotools:'video', planner:'planner', schedule:'schedule', settings:'settings' };
   return labels[p] || p;
 }
 
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
 function switchTab(group, tab) {
-  document.querySelectorAll('#' + group + '-tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll(`#${group}-tabs .tab`).forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
   if (group === 'gen') {
     document.querySelectorAll('.gentab').forEach(t => t.style.display = 'none');
-    document.getElementById('gentab-' + tab).style.display = 'block';
+    document.getElementById(`gentab-${tab}`).style.display = 'block';
   } else if (group === 'media') {
     document.getElementById('mediatab-photos').style.display = tab === 'photos' ? 'block' : 'none';
     document.getElementById('mediatab-videos').style.display = tab === 'videos' ? 'block' : 'none';
