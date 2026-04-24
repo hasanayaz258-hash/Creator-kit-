@@ -1159,9 +1159,6 @@ const QUOTA = {
   gemini:   { used: 0, max: 1500,  key: 'quota_gemini' },
   groq:     { used: 0, max: 14400, key: 'quota_groq' },
   cerebras: { used: 0, max: 14400, key: 'quota_cerebras' }
-},
-  gemini:   { used: 0, max: 1500, key: 'quota_gemini' },
-  groq:     { used: 0, max: 14400, key: 'quota_groq' }
 };
 
 function loadQuota() {
@@ -1191,8 +1188,6 @@ function getAvailableProvider(preferred) {
     seen.add(p);
     if (QUOTA[p] && QUOTA[p].used < QUOTA[p].max) return p;
   }
-  return 'gemini';
-}
   return 'gemini';
 }
 
@@ -1482,10 +1477,7 @@ function copyPackAll() {
   sections.forEach(s => {
     const el = document.getElementById('pack-' + s + '-content');
     if (el && el.textContent && document.getElementById('pack-' + s + '-out').style.display !== 'none') {
-      all += '=== ' + s.toUpperCase() + ' ===
-' + el.textContent + '
-
-';
+      all += '=== ' + s.toUpperCase() + ' ===\n' + el.textContent + '\n\n';
     }
   });
   navigator.clipboard.writeText(all.trim()).then(() => {
@@ -1768,7 +1760,7 @@ Return as JSON array of ${count} strings without # symbol. ONLY JSON array.`;
         return;
       } catch(e) {}
     }
-    el.innerHTML = '<button class="copy-btn" onclick="copyText('' + cfg.el + '')">📋 Copy</button>' + result;
+    el.innerHTML = '<button class="copy-btn" onclick="copyText(\''+ cfg.el +'\')">📋 Copy</button>' + result;
   } catch(e) {
     el.textContent = '❌ Error: ' + e.message;
   }
